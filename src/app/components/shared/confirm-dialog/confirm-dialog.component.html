@@ -1,0 +1,24 @@
+<div class="confirm-dialog-container dark-mauve-dialog">
+  <div class="dialog-header">
+    <div class="icon-wrapper" [class.destructive]="data.isDestructive">
+      <lucide-icon [name]="alertIcon"></lucide-icon>
+    </div>
+    <h2 mat-dialog-title class="dialog-title">{{ data.title }}</h2>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <p>{{ data.message }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button class="cancel-btn" (click)="onCancel()">
+      {{ data.cancelText || 'Annuler' }}
+    </button>
+    <button mat-flat-button 
+            [class.confirm-btn-destructive]="data.isDestructive"
+            [class.confirm-btn-primary]="!data.isDestructive"
+            (click)="onConfirm()">
+      {{ data.confirmText || 'Confirmer' }}
+    </button>
+  </mat-dialog-actions>
+</div>

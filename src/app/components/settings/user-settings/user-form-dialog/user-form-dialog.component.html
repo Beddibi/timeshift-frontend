@@ -1,0 +1,67 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="title-container">
+      <h3>{{ isEditMode ? 'Modifier les accès' : 'Nouvel Administrateur' }}</h3>
+      <p>Définissez l'identité et les privilèges de ce compte système.</p>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="dialogRef.close()">
+      <lucide-icon [name]="closeIcon"></lucide-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <div class="superadmin-warning" *ngIf="isEditMode && data.user?.permissions?.includes('*')">
+      <lucide-icon [name]="alertIcon" class="warning-icon"></lucide-icon>
+      <div>
+        <h4>Super Administrateur</h4>
+        <p>Ce compte dispose d'un accès absolu (All Access). Les permissions individuelles sont verrouillées.</p>
+      </div>
+    </div>
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="modern-form">
+      <div class="form-grid">
+        <label class="form-field">
+          <span class="field-label">Prénom</span>
+          <input type="text" formControlName="firstName" class="premium-input" placeholder="Ex: Jean">
+        </label>
+        
+        <label class="form-field">
+          <span class="field-label">Nom</span>
+          <input type="text" formControlName="lastName" class="premium-input" placeholder="Ex: Dupont">
+        </label>
+      </div>
+
+      <div class="form-grid">
+        <label class="form-field">
+          <span class="field-label">Nom d'utilisateur <span class="required">*</span></span>
+          <input type="text" formControlName="username" class="premium-input" placeholder="Identifiant unique">
+        </label>
+        
+        <label class="form-field">
+          <span class="field-label">Nouveau mot de passe <span class="required" *ngIf="!isEditMode">*</span></span>
+          <input type="password" formControlName="passwordPlain" class="premium-input" placeholder="Laissez vide pour conserver">
+        </label>
+      </div>
+
+      <div class="permissions-section" formGroupName="permissions">
+        <h4 class="section-title">Attribution des Permissions</h4>
+        
+        <div class="perm-module" *ngFor="let group of permissionGroups">
+          <div class="module-title">{{ group.module }}</div>
+          <div class="checkbox-grid">
+            <mat-checkbox *ngFor="let perm of group.perms" [formControlName]="perm.id" color="primary" class="custom-checkbox">
+              {{ perm.label }}
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-button class="cancel-btn" [disabled]="isSubmitting" (click)="dialogRef.close()">Annuler</button>
+    <button mat-flat-button color="primary" class="submit-btn" [disabled]="userForm.invalid || isSubmitting" (click)="onSubmit()">
+      {{ isSubmitting ? 'Enregistrement...' : (isEditMode ? 'Enregistrer' : 'Créer le compte') }}
+    </button>
+  </div>
+</div>

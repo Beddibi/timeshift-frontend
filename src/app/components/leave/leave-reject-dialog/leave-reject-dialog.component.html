@@ -1,0 +1,43 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="header-icon-bg">
+      <lucide-icon [name]="rejectIcon" class="header-icon"></lucide-icon>
+    </div>
+    <div class="header-text">
+      <h2>Refuser la demande</h2>
+      <p>Demande de {{ data.employeeName }}</p>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="onCancel()" tabindex="-1">
+      <lucide-icon [name]="closeIcon" class="close-icon"></lucide-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+
+    <div class="leave-details">
+      <div class="detail-item">
+        <span class="label">Date :</span>
+        <span class="value">{{ data.leave.startDate | date:'dd/MM/yyyy' }} au {{ data.leave.endDate | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Durée :</span>
+        <span class="value">{{ data.leave.totalDays }} jour(s)</span>
+      </div>
+    </div>
+
+    <mat-form-field appearance="outline" class="form-field full-width reason-input">
+      <mat-label>Motif du refus (Obligatoire)</mat-label>
+      <textarea matInput [(ngModel)]="rejectionNote" placeholder="Expliquez la raison du refus à l'employé..." rows="4" required></textarea>
+      <lucide-icon [name]="messageIcon" matPrefix class="input-icon"></lucide-icon>
+      <mat-error *ngIf="!rejectionNote.trim()">Le motif est obligatoire pour refuser.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-button class="cancel-btn" (click)="onCancel()">Annuler</button>
+    <button mat-flat-button class="submit-btn" [disabled]="!rejectionNote.trim()" (click)="onSubmit()">
+      <lucide-icon [name]="rejectIcon" class="btn-icon"></lucide-icon>
+      Confirmer le Refus
+    </button>
+  </div>
+</div>

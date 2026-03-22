@@ -1,0 +1,270 @@
+@use '@angular/material' as mat;
+
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-surface);
+  color: var(--text-body);
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 500px;
+  width: 100vw;
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-subtle);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, rgba(91, 66, 176, 0.1), transparent);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  
+  .header-icon-bg {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    box-shadow: 0 4px 12px rgba(91, 66, 176, 0.3);
+    
+    .header-icon {
+      color: white;
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
+  .header-text {
+    flex: 1;
+    
+    h2 {
+      margin: 0 0 4px 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      letter-spacing: -0.01em;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: var(--text-muted);
+    
+    &:hover {
+      color: var(--text-heading);
+      background-color: var(--bg-elevated);
+    }
+    
+    .close-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.dialog-content {
+  padding: 32px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.alert-box.error {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  background-color: var(--color-error-bg);
+  border-left: 4px solid var(--color-error-text);
+  border-radius: 8px;
+  margin-bottom: 24px;
+  
+  .alert-icon {
+    color: var(--color-error-text);
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  
+  .alert-content {
+    h4 {
+      margin: 0 0 4px 0;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-error-text);
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-heading);
+    }
+  }
+}
+
+.department-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  .full-width {
+    width: 100%;
+  }
+
+  mat-form-field {
+    width: 100%;
+    
+    .input-icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      color: var(--text-muted);
+    }
+
+    ::ng-deep .mdc-text-field--outlined {
+      --mdc-outlined-text-field-container-shape: 10px;
+      --mdc-outlined-text-field-label-text-color: var(--text-muted);
+      --mdc-outlined-text-field-hover-label-text-color: var(--text-heading);
+      --mdc-outlined-text-field-focus-label-text-color: var(--accent-primary);
+      --mdc-outlined-text-field-outline-color: var(--border-subtle);
+      --mdc-outlined-text-field-hover-outline-color: var(--text-muted);
+      --mdc-outlined-text-field-focus-outline-color: var(--accent-primary);
+      --mdc-outlined-text-field-input-text-color: var(--text-heading);
+      --mdc-outlined-text-field-caret-color: var(--accent-primary);
+      
+      .mdc-notched-outline__leading, 
+      .mdc-notched-outline__notch, 
+      .mdc-notched-outline__trailing {
+        border-color: var(--border-subtle);
+      }
+    }
+  }
+  
+  .status-toggle {
+    margin-top: 8px;
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    ::ng-deep {
+      .mat-mdc-select-value {
+        color: var(--text-heading);
+      }
+
+      .mat-mdc-select-arrow {
+        color: var(--text-muted);
+      }
+
+      .mdc-menu-surface {
+        background-color: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      }
+
+      .mat-mdc-option {
+        color: var(--text-heading);
+        
+        &:hover:not(.mdc-list-item--disabled) {
+          background-color: var(--bg-card);
+        }
+        
+        &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+          background-color: rgba(91, 66, 176, 0.1);
+        }
+      }
+    }
+    
+    .status-option {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      
+      &.active {
+        background-color: var(--color-success-bg);
+        color: var(--color-success-text);
+      }
+      
+      &.inactive {
+        background-color: var(--color-error-bg);
+        color: var(--color-error-text);
+      }
+    }
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 24px 32px;
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  
+  button {
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    
+    &.cancel-btn {
+      color: var(--text-heading);
+      border-color: var(--border-subtle);
+      
+      &:hover {
+        background-color: var(--bg-elevated);
+      }
+    }
+    
+    &.submit-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+      color: white;
+      
+      .btn-icon {
+        width: 18px;
+        height: 18px;
+      }
+      
+      &:hover:not([disabled]) {
+        box-shadow: 0 4px 12px rgba(91, 66, 176, 0.4);
+        transform: translateY(-1px);
+      }
+      
+      &:active:not([disabled]) {
+        transform: translateY(0);
+      }
+      
+      &[disabled] {
+        background: var(--bg-elevated);
+        color: var(--text-muted);
+      }
+    }
+  }
+}
+

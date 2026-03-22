@@ -1,0 +1,22 @@
+<div class="dialog-container premium-alert-dialog" [ngClass]="data.type || 'warning'">
+  <div class="header-bg-glow"></div>
+
+  <div class="alert-content">
+    <div class="icon-pulse-wrapper">
+      <div class="icon-box">
+        <lucide-icon [img]="getIcon()"></lucide-icon>
+      </div>
+    </div>
+
+    <div class="text-block">
+      <h2 class="alert-title">{{ data.title }}</h2>
+      <p class="alert-message">{{ data.message }}</p>
+    </div>
+  </div>
+
+  <div class="dialog-actions premium-actions">
+    <button mat-flat-button class="submit-btn" (click)="onClose()" type="button" cdkFocusInitial>
+      {{ data.buttonText || 'Compris' }}
+    </button>
+  </div>
+</div>

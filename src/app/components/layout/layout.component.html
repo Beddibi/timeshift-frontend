@@ -1,0 +1,99 @@
+<mat-sidenav-container class="layout-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <div class="logo-container">
+      <span class="logo-text">Time<span>Shift</span></span>
+    </div>
+    
+    <nav class="nav-list">
+      
+      <div class="nav-group">
+        <span class="nav-group-title">Général</span>
+        <a class="nav-item" routerLink="/dashboard" routerLinkActive="active-link">
+          <lucide-icon [name]="dashboardIcon" class="nav-icon"></lucide-icon>
+          <span class="nav-text">Tableau de Bord</span>
+        </a>
+      </div>
+
+      <div class="nav-group" *ngIf="authService.hasPermission('VIEW_PERSONNEL') || authService.hasPermission('VIEW_DEPARTMENTS') || authService.hasPermission('VIEW_PLANNING') || authService.hasPermission('VIEW_LEAVES')">
+        <span class="nav-group-title">Ressources Humaines</span>
+        <a class="nav-item" routerLink="/personnel" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_PERSONNEL') || authService.hasPermission('MANAGE_PERSONNEL')">
+          <lucide-icon [name]="usersIcon" class="nav-icon"></lucide-icon>
+          <span class="nav-text">Personnel</span>
+        </a>
+        <a class="nav-item" routerLink="/departments" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_DEPARTMENTS') || authService.hasPermission('MANAGE_DEPARTMENTS')">
+          <lucide-icon [name]="buildingIcon" class="nav-icon"></lucide-icon>
+          <span class="nav-text">Départements</span>
+        </a>
+        <a class="nav-item" routerLink="/planning" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_PLANNING') || authService.hasPermission('MANAGE_PLANNING')">
+          <lucide-icon [name]="calendarIcon" class="nav-icon"></lucide-icon>
+          <span class="nav-text">Planning</span>
+        </a>
+        <a class="nav-item" routerLink="/leaves" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_LEAVES') || authService.hasPermission('MANAGE_LEAVES')">
+          <lucide-icon [name]="leaveIcon" class="nav-icon"></lucide-icon>
+          <span class="nav-text">Congés</span>
+        </a>
+      </div>
+
+      <div class="nav-group" *ngIf="authService.hasPermission('VIEW_REPORTS') || authService.hasPermission('MANAGE_SETTINGS') || authService.hasPermission('MANAGE_USERS')">
+        <span class="nav-group-title">Système & Outils</span>
+        <a class="nav-item" routerLink="/reports" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_REPORTS')">
+          <lucide-icon [name]="reportsIcon" class="nav-icon"></lucide-icon>
+          <span class="nav-text">Rapports d'Activité</span>
+        </a>
+        <a class="nav-item" routerLink="/settings/company" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_SETTINGS')">
+          <lucide-icon [name]="settingsIcon" class="nav-icon"></lucide-icon>
+          <span class="nav-text">Paramètres</span>
+        </a>
+        <a class="nav-item" routerLink="/settings/users" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_USERS')">
+          <lucide-icon [name]="shieldIcon" class="nav-icon"></lucide-icon>
+          <span class="nav-text">Accès & Rôles</span>
+        </a>
+        <a class="nav-item" routerLink="/settings/devices" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_DEVICES') || authService.hasPermission('MANAGE_SETTINGS')">
+          <lucide-icon [name]="devicesIcon" class="nav-icon"></lucide-icon>
+          <span class="nav-text">Pointeuses / Kiosque</span>
+        </a>
+      </div>
+
+    </nav>
+
+    <div class="sidenav-footer">
+      <a class="nav-item logout-item" (click)="logout()">
+        <lucide-icon [name]="logoutIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Déconnexion</span>
+      </a>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-layout">
+    <header class="top-header">
+      <div class="search-bar">
+        <lucide-icon [name]="searchIcon" class="search-icon"></lucide-icon>
+        <input type="text" placeholder="Rechercher un employé, département...">
+        <div class="shortcut">Ctrl K</div>
+      </div>
+
+      <div class="header-actions">
+        <button mat-icon-button class="action-btn notification-btn">
+          <lucide-icon [name]="bellIcon"></lucide-icon>
+        </button>
+        
+        <div class="divider"></div>
+
+        <div class="user-profile">
+          <div class="user-details" *ngIf="authService.currentUser$ | async as currentUser">
+            <span class="user-name">{{ currentUser.firstName || currentUser.username }}</span>
+            <span class="user-role">{{ currentUser.permissions?.includes('*') ? 'Super Admin' : (currentUser.roles?.[0] || 'Utilisateur') }}</span>
+          </div>
+          <div class="avatar" *ngIf="authService.currentUser$ | async as currentUser">
+            <span>{{ (currentUser.firstName || currentUser.username).charAt(0).toUpperCase() }}</span>
+            <div class="status-dot"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-wrapper">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,1 +1,148 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap');
+
+:root {
+  /* Backgrounds */
+  --bg-base: #0D0A1A;
+  --bg-surface: #120E24;
+  --bg-elevated: #1A1330;
+  --bg-card: #231B42;
+
+  /* Primary Accent - Violet / Mauve */
+  --accent-deep: #3D2D7A;
+  --accent-primary: #5B42B0;
+  --accent-hover: #7B5DD4;
+  --accent-tint: #A78FE8;
+
+  /* Secondary Accents */
+  --secondary-indigo: #1E3A5F;
+  --secondary-prune: #4A1F5C;
+  --secondary-teal: #1F3D3A;
+  --secondary-rose: #3D2040;
+
+  /* Text */
+  --text-heading: #F0EAFF;
+  --text-body: #C4B4E8;
+  --text-muted: #9B89C4;
+  --text-disabled: #5C5180;
+
+  /* Borders & Dividers */
+  --border-subtle: #2D2545;
+  --border-emphasis: #3D3360;
+
+  /* Semantic */
+  --color-success-bg: #2D6A4F;
+  --color-success-text: #7ECDC6;
+  --color-warning-bg: #5C3D1A;
+  --color-warning-text: #F0C070;
+  --color-error-bg: #5C1A2A;
+  --color-error-text: #F08080;
+  --color-info-bg: #1A2D5C;
+  --color-info-text: #90BFEA;
+
+  /* Typography */
+  --font-primary: 'Inter', sans-serif;
+  --font-display: 'Playfair Display', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Shadows */
+  --shadow-none: none;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+}
+
+/* Base Styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-base);
+  color: var(--text-body);
+  font-family: var(--font-primary);
+  line-height: 1.7;
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  color: var(--text-heading);
+}
+
+h1 {
+  font-family: var(--font-primary);
+  font-size: 28px;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  h1 { font-size: 32px; }
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #E8E0F5;
+}
+
+@media (min-width: 768px) {
+  h2 { font-size: 24px; }
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #D4C8F0;
+}
+
+@media (min-width: 768px) {
+  h3 { font-size: 18px; }
+}
+
+/* Utility Classes */
+.text-small {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.text-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Global Dialog Styles */
+.dark-mauve-dialog {
+  .mdc-dialog__surface {
+    background-color: var(--bg-surface) !important;
+    border-radius: var(--radius-lg) !important;
+    border: 1px solid var(--border-subtle) !important;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25) !important;
+  }
+}

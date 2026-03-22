@@ -1,0 +1,120 @@
+<div class="page-container">
+  <div class="header-section">
+    <div class="title-group">
+      <h1 class="page-title">Terminaux & Pointeuses</h1>
+      <p class="page-subtitle">Gérez vos Pointeuses ZKTeco ou créez des Tablettes Kiosque</p>
+    </div>
+    <button mat-flat-button class="add-button" (click)="openAddForm()">
+      <lucide-icon [name]="plusIcon"></lucide-icon>
+      Nouvel Appareil
+    </button>
+  </div>
+
+  <div class="split-layout" *ngIf="showForm">
+    <!-- Form Side Panel -->
+    <div class="form-panel card">
+      <div class="panel-header">
+        <h2>{{ editingId ? 'Modifier la Pointeuse' : 'Ajouter une Pointeuse' }}</h2>
+        <button mat-icon-button (click)="closeForm()"><lucide-icon [name]="closeIcon"></lucide-icon></button>
+      </div>
+      <form [formGroup]="deviceForm" class="device-form" (ngSubmit)="saveDevice()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nom de l'appareil</mat-label>
+          <input matInput formControlName="name" placeholder="Ex: Tablette Accueil">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Type d'Appareil</mat-label>
+          <mat-select formControlName="type">
+            <mat-option value="WEB_KIOSK">Interface Kiosque Web (Tablette/Mobile)</mat-option>
+            <mat-option value="PHYSICAL">Appareil Physique Externe (Ex: ZKTeco)</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Emplacement</mat-label>
+          <input matInput formControlName="location" placeholder="Ex: Entrée Principale">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width" *ngIf="deviceForm.get('type')?.value === 'PHYSICAL'">
+          <mat-label>Adresse IP (Optionnel)</mat-label>
+          <input matInput formControlName="ipAddress" placeholder="Ex: 192.168.1.100">
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="deviceForm.invalid">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <table mat-table [dataSource]="devices" class="device-table">
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Appareil </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="device-cell">
+            <div class="device-icon" [ngClass]="element.type === 'PHYSICAL' ? 'physical' : 'app'">
+              <lucide-icon [name]="element.type === 'PHYSICAL' ? serverIcon : phoneIcon"></lucide-icon>
+            </div>
+            <div class="device-info">
+              <span class="device-name">{{element.name}}</span>
+              <span class="device-type">{{element.type === 'PHYSICAL' ? 'Pointeuse Réseau' : 'Tablette Kiosque'}}</span>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Location Column -->
+      <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef> Emplacement </th>
+        <td mat-cell *matCellDef="let element"> {{element.location || '-'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element"></td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Statut </th>
+        <td mat-cell *matCellDef="let element">
+          <span class="badge" [ngClass]="element.isActive ? 'active' : 'inactive'">
+            {{element.isActive ? 'Actif' : 'Inactif'}}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Token / Kiosk Link Column -->
+      <ng-container matColumnDef="token">
+        <th mat-header-cell *matHeaderCellDef> Lien Kiosque </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="kiosk-link-box" *ngIf="element.type === 'WEB_KIOSK' && element.kioskToken">
+            <code>/kiosk?token={{element.kioskToken | slice:0:8}}...</code>
+            <button mat-icon-button (click)="copyToClipboard(getKioskLink(element.kioskToken))" title="Copier le lien direct">
+              <lucide-icon [name]="copyIcon"></lucide-icon>
+            </button>
+          </div>
+          <span *ngIf="element.type !== 'WEB_KIOSK'" class="text-muted">-</span>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="action-buttons">
+            <button class="edit-btn" (click)="openEditForm(element)"><lucide-icon [name]="editIcon"></lucide-icon></button>
+            <button class="delete-btn" (click)="deleteDevice(element._id)"><lucide-icon [name]="deleteIcon"></lucide-icon></button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>

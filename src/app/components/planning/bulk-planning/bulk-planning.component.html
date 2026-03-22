@@ -1,0 +1,84 @@
+<div class="bulk-container">
+  <div class="bulk-header">
+    <button mat-icon-button (click)="goBack()" class="back-btn">
+      <lucide-icon [img]="backIcon"></lucide-icon>
+    </button>
+    <div class="title-section">
+      <h1>Générateur de Planning</h1>
+      <p>Créez automatiquement les sessions de travail pour toute une période en un seul clic.</p>
+    </div>
+  </div>
+
+  <mat-card class="bulk-card">
+    <div class="card-content">
+      <div class="info-banner">
+        <lucide-icon [img]="workflowIcon" class="banner-icon"></lucide-icon>
+        <div class="banner-text">
+          <h3>Comment ça marche ?</h3>
+          <p>Le générateur utilise les horaires configurés dans les <strong>Paramètres de l'entreprise</strong> (jours travaillés, heure de début, heure de fin) pour remplir automatiquement les agendas des employés sélectionnés.</p>
+        </div>
+      </div>
+
+      <form [formGroup]="bulkForm" (ngSubmit)="onSubmit()" class="bulk-form">
+        
+        <div class="form-row">
+          <div class="form-group icon-group">
+            <lucide-icon [img]="calendarIcon" class="field-icon"></lucide-icon>
+            <div class="field-content">
+              <label>Période à générer</label>
+              <mat-form-field appearance="outline" class="dark-field">
+                <mat-select formControlName="period">
+                  <mat-option value="CURRENT_WEEK">Cette semaine</mat-option>
+                  <mat-option value="NEXT_WEEK">Semaine prochaine</mat-option>
+                  <mat-option value="CURRENT_MONTH">Ce mois-ci</mat-option>
+                  <mat-option value="NEXT_MONTH">Mois prochain</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group icon-group">
+            <lucide-icon [img]="usersIcon" class="field-icon"></lucide-icon>
+            <div class="field-content">
+              <label>Employés concernés</label>
+              <mat-form-field appearance="outline" class="dark-field">
+                <mat-select formControlName="personnelIds" multiple>
+                  <mat-option value="ALL">Tous les employés</mat-option>
+                  <mat-divider></mat-divider>
+                  <mat-option *ngFor="let p of personnelList" [value]="p._id">
+                    {{ p.firstName }} {{ p.lastName }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-preview" *ngIf="companySettings">
+          <h4><lucide-icon [img]="settingsIcon" class="small-icon"></lucide-icon> Horaires appliqués (Aperçu)</h4>
+          <div class="preview-days">
+            <ng-container *ngFor="let day of companySettings.weeklySchedule">
+              <div class="day-badge" [class.active]="day.isActive">
+                <span class="d-name">{{ ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'][day.dayOfWeek] }}</span>
+                <span class="d-time" *ngIf="day.isActive">{{ day.morningStart }} - {{ day.afternoonEnd }}</span>
+                <span class="d-off" *ngIf="!day.isActive">Repos</span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button mat-button type="button" (click)="goBack()" class="cancel-btn">Annuler</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="bulkForm.invalid || isLoading" class="submit-btn">
+            <lucide-icon [img]="checkIcon" *ngIf="!isLoading"></lucide-icon>
+            <span class="spinner" *ngIf="isLoading"></span>
+            {{ isLoading ? 'Génération en cours...' : 'Générer le planning' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </mat-card>
+</div>

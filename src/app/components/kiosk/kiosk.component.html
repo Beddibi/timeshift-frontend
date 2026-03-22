@@ -1,0 +1,164 @@
+<div class="kiosk-fullscreen-wrapper" [ngClass]="{'is-loading': loading, 'has-success': successMessage, 'has-error': error}">
+  
+  <!-- Premium Glass Background -->
+  <div class="kiosk-bg-glow"></div>
+  <div class="kiosk-mesh-gradient"></div>
+
+  <!-- Main Kiosk Layout -->
+  <div class="kiosk-main-layer" *ngIf="!loading && !successMessage && !error && !showAdminExit">
+    
+    <!-- Header: Badge & Clock -->
+    <div class="kiosk-header">
+      <div class="device-badge glass-panel">
+        <lucide-icon [img]="clockIcon"></lucide-icon>
+        <span>{{ deviceInfo?.name || 'Terminal Non Configuré' }}</span>
+      </div>
+      
+      <div class="clock-display">
+        <div class="time-block">
+          <span class="time">{{ currentTime | date:'HH:mm' }}</span>
+          <span class="seconds">{{ currentTime | date:'ss' }}</span>
+        </div>
+        <div class="date">{{ currentTime | date:'EEEE d MMMM yyyy':'':'fr' | titlecase }}</div>
+      </div>
+    </div>
+
+    <!-- Content: Input & Numpad -->
+    <div class="kiosk-content">
+      <div class="instruction-box">
+        <h2>Identifiez-vous</h2>
+        <p>Saisissez votre Matricule ou scannez votre carte / QR Code.</p>
+      </div>
+
+      <form [formGroup]="kioskForm" (ngSubmit)="clockAction()">
+        
+        <div class="input-wrapper glass-panel">
+          <input type="text" formControlName="matricule" class="glass-input" placeholder="Matricule..." autocomplete="off">
+          
+          <button type="button" class="action-btn scan-btn" (click)="toggleScanner()" *ngIf="!kioskForm.get('matricule')?.value && !showScanner" title="Scanner QR/Code Barre">
+            <lucide-icon [img]="cameraIcon"></lucide-icon>
+          </button>
+          <button type="button" class="action-btn clear-btn" (click)="clear()" *ngIf="kioskForm.get('matricule')?.value">
+            <lucide-icon [img]="closeIcon"></lucide-icon>
+          </button>
+        </div>
+
+        <!-- Scanner Component Overlay -->
+        <div class="scanner-container glass-panel" *ngIf="showScanner">
+          <div class="scanner-header">
+            <span>Scanner Actif</span>
+            <button type="button" class="close-scanner" (click)="toggleScanner()"><lucide-icon [img]="closeIcon"></lucide-icon></button>
+          </div>
+          <zxing-scanner
+              [device]="currentDevice"
+              (camerasFound)="onCamerasFound($event)"
+              (scanSuccess)="onScanSuccess($event)"
+              [formats]="allowedFormats"
+          ></zxing-scanner>
+        </div>
+
+        <!-- Integrated NumPad for Tablet/Mobile -->
+        <div class="kiosk-numpad" *ngIf="!showScanner">
+          <div class="numpad-row">
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(1)">1</button>
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(2)">2</button>
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(3)">3</button>
+          </div>
+          <div class="numpad-row">
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(4)">4</button>
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(5)">5</button>
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(6)">6</button>
+          </div>
+          <div class="numpad-row">
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(7)">7</button>
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(8)">8</button>
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(9)">9</button>
+          </div>
+          <div class="numpad-row">
+            <button type="button" class="num-btn glass-panel action empty" disabled></button>
+            <button type="button" class="num-btn glass-panel" (click)="onNumpadClick(0)">0</button>
+            <button type="button" class="num-btn glass-panel action delete" (click)="backspace()">
+              <lucide-icon [img]="backIcon"></lucide-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Huge Submit Action -->
+        <button type="submit" class="submit-action-btn" [disabled]="kioskForm.invalid && !showScanner">
+          <div class="btn-glow"></div>
+          <lucide-icon [img]="checkIcon"></lucide-icon>
+          <span>Enregistrer le Pointage</span>
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Hidden Exit Trigger (Bottom Right Corner) -->
+    <div class="hidden-exit-trigger" (click)="openAdminExit()" title="Paramètres Admin"></div>
+  </div>
+
+  <!-- Admin Exit Overlay (Custom Dialog) -->
+  <div class="admin-exit-overlay" *ngIf="showAdminExit">
+    <div class="admin-exit-card glass-panel" [class.shake]="adminExitError">
+      <div class="card-header">
+        <lucide-icon [img]="clockIcon"></lucide-icon>
+        <h3>Quitter le Mode Kiosque</h3>
+        <button type="button" class="close-admin" (click)="closeAdminExit()"><lucide-icon [img]="closeIcon"></lucide-icon></button>
+      </div>
+      <p>Entrez le code PIN Administrateur pour fermer le terminal.</p>
+      
+      <div class="pin-dots">
+        <div class="dot" [class.filled]="adminExitPin.length >= 1" [class.error]="adminExitError"></div>
+        <div class="dot" [class.filled]="adminExitPin.length >= 2" [class.error]="adminExitError"></div>
+        <div class="dot" [class.filled]="adminExitPin.length >= 3" [class.error]="adminExitError"></div>
+        <div class="dot" [class.filled]="adminExitPin.length >= 4" [class.error]="adminExitError"></div>
+      </div>
+
+      <div class="kiosk-numpad compact">
+        <div class="numpad-row">
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(1)">1</button>
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(2)">2</button>
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(3)">3</button>
+        </div>
+        <div class="numpad-row">
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(4)">4</button>
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(5)">5</button>
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(6)">6</button>
+        </div>
+        <div class="numpad-row">
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(7)">7</button>
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(8)">8</button>
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(9)">9</button>
+        </div>
+        <div class="numpad-row">
+          <div class="num-btn empty"></div>
+          <button type="button" class="num-btn glass-panel" (click)="onAdminNumpadClick(0)">0</button>
+          <button type="button" class="num-btn glass-panel action delete" (click)="onAdminNumpadDelete()">
+            <lucide-icon [img]="backIcon"></lucide-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages Feedback Overlay (Full Screen) -->
+  <div class="feedback-screen-overlay" *ngIf="successMessage || error">
+    <div class="feedback-card glass-panel" [ngClass]="successMessage ? 'success' : 'error'">
+      <div class="icon-ring">
+        <lucide-icon [img]="successMessage ? checkIcon : faceIcon" size="80"></lucide-icon>
+      </div>
+      <h2>{{ successMessage ? 'Succès' : 'Échec' }}</h2>
+      <p class="feedback-msg" [innerHTML]="successMessage || error"></p>
+    </div>
+  </div>
+
+  <!-- Loading Screen Override -->
+  <div class="feedback-screen-overlay" *ngIf="loading">
+    <div class="feedback-card glass-panel loading-card">
+      <lucide-icon [img]="clockIcon" size="64" class="spin-icon"></lucide-icon>
+      <h2>Initialisation...</h2>
+      <p>Tentative de connexion au terminal sécurisé.</p>
+    </div>
+  </div>
+
+</div>

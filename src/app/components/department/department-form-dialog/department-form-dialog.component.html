@@ -1,0 +1,60 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="header-icon-bg">
+      <lucide-icon [name]="buildingIcon" class="header-icon"></lucide-icon>
+    </div>
+    <div class="header-text">
+      <h2>{{ isEditMode ? 'Modifier le Département' : 'Nouveau Département' }}</h2>
+      <p>{{ isEditMode ? 'Mettez à jour les informations du département.' : 'Saisissez les informations du nouveau département.' }}</p>
+    </div>
+    <button mat-icon-button (click)="onCancel()" class="close-btn" tabindex="-1">
+      <lucide-icon [name]="closeIcon" class="close-icon"></lucide-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <div class="alert-box error" *ngIf="errorMessage">
+      <lucide-icon [name]="alertIcon" class="alert-icon"></lucide-icon>
+      <div class="alert-content">
+        <h4>Erreur</h4>
+        <p>{{ errorMessage }}</p>
+      </div>
+    </div>
+
+    <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()" class="department-form">
+      <mat-form-field appearance="outline" class="form-field full-width">
+        <mat-label>Nom du département</mat-label>
+        <input matInput formControlName="name" placeholder="Ex: Ressources Humaines" required>
+        <lucide-icon [name]="buildingIcon" matPrefix class="input-icon"></lucide-icon>
+        <mat-error *ngIf="departmentForm.get('name')?.hasError('required')">Le nom est requis</mat-error>
+      </mat-form-field>
+
+
+
+      <div class="status-toggle">
+        <label>Statut</label>
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-select formControlName="isActive">
+            <mat-option [value]="true">
+              <div class="status-option active">Actif</div>
+            </mat-option>
+            <mat-option [value]="false">
+              <div class="status-option inactive">Inactif</div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-stroked-button (click)="onCancel()" type="button" class="cancel-btn">
+      Annuler
+    </button>
+    <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="departmentForm.invalid" class="submit-btn">
+      <lucide-icon [name]="checkIcon" class="btn-icon"></lucide-icon>
+      {{ isEditMode ? 'Enregistrer' : 'Créer' }}
+    </button>
+  </div>
+</div>

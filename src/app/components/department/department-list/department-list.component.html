@@ -1,0 +1,98 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-icon-bg">
+        <lucide-icon [name]="buildingIcon" class="header-icon"></lucide-icon>
+      </div>
+      <div class="title-section">
+        <h1 class="page-title">Départements</h1>
+        <p class="page-subtitle">Gérez la structure de votre organisation</p>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <div class="search-box">
+        <lucide-icon [name]="searchIcon" class="search-icon"></lucide-icon>
+        <input 
+          type="text" 
+          placeholder="Rechercher un département..." 
+          [(ngModel)]="searchQuery" 
+          (ngModelChange)="filterDepartments()"
+          class="search-input"
+        >
+      </div>
+      <button mat-flat-button color="primary" class="action-btn" (click)="openDepartmentDialog()">
+        <lucide-icon [name]="plusIcon" class="btn-icon"></lucide-icon>
+        Nouveau Département
+      </button>
+    </div>
+  </div>
+
+  <div class="content-body" [class.loading]="loading">
+    <div class="loading-overlay" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+      <button mat-stroked-button color="warn" (click)="loadDepartments()">Réessayer</button>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading && !error && filteredDepartments.length === 0">
+      <div class="empty-icon-wrapper">
+        <lucide-icon [name]="buildingIcon" class="empty-icon"></lucide-icon>
+      </div>
+      <h3>Aucun département trouvé</h3>
+      <p *ngIf="searchQuery">Aucun département ne correspond à votre recherche "{{ searchQuery }}".</p>
+      <p *ngIf="!searchQuery">Commencez par ajouter votre premier département pour structurer votre équipe.</p>
+      <button mat-flat-button color="primary" class="mt-4" (click)="openDepartmentDialog()" *ngIf="!searchQuery">
+        <lucide-icon [name]="plusIcon" class="btn-icon"></lucide-icon>
+        Créer un département
+      </button>
+    </div>
+
+    <!-- Departments Grid -->
+    <div class="departments-grid" *ngIf="!loading && !error && filteredDepartments.length > 0">
+      <mat-card class="department-card" *ngFor="let dept of filteredDepartments">
+        <div class="card-status-indicator" [class.active]="dept.isActive" [class.inactive]="!dept.isActive"></div>
+        
+        <mat-card-header>
+          <div class="card-icon">
+            <lucide-icon [name]="buildingIcon"></lucide-icon>
+          </div>
+          <div class="card-title-group">
+            <mat-card-title>{{ dept.name }}</mat-card-title>
+          </div>
+          
+          <button mat-button class="status-toggle-btn" 
+                  [class.active]="dept.isActive" 
+                  [class.inactive]="!dept.isActive"
+                  (click)="toggleDepartmentStatus(dept)">
+            <div class="status-dot"></div>
+            {{ dept.isActive ? 'Actif' : 'Inactif' }}
+          </button>
+          
+          <button mat-icon-button [matMenuTriggerFor]="menu" class="more-btn">
+            <lucide-icon [name]="moreIcon"></lucide-icon>
+          </button>
+          <mat-menu #menu="matMenu" class="custom-menu">
+            <button mat-menu-item (click)="openDepartmentDialog(dept)">
+              <lucide-icon [name]="editIcon" class="menu-icon"></lucide-icon>
+              <span>Modifier</span>
+            </button>
+            <button mat-menu-item class="delete-item" (click)="deleteDepartment(dept)">
+              <lucide-icon [name]="deleteIcon" class="menu-icon"></lucide-icon>
+              <span>Supprimer</span>
+            </button>
+          </mat-menu>
+        </mat-card-header>
+        
+        <mat-card-content class="compact-content">
+          <!-- Description removed as requested -->
+        </mat-card-content>
+        
+      </mat-card>
+    </div>
+  </div>
+</div>

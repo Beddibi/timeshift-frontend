@@ -1,0 +1,228 @@
+.user-settings-layout {
+  padding: 32px 40px;
+  height: calc(100% - 64px);
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+
+    .title-area {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+
+      .icon-wrapper {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(142, 110, 224, 0.2), rgba(91, 66, 176, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #8e6ee0;
+        border: 1px solid rgba(142, 110, 224, 0.2);
+        
+        lucide-icon { width: 28px; height: 28px; }
+      }
+
+      h1 {
+        margin: 0 0 6px 0;
+        font-size: 32px;
+        font-weight: 800;
+        color: #fff;
+        font-family: 'Outfit', sans-serif;
+        letter-spacing: -0.5px;
+      }
+      p {
+        margin: 0;
+        color: #a09eb6;
+        font-size: 15px;
+        font-weight: 500;
+      }
+    }
+
+    .add-btn {
+      height: 48px;
+      padding: 0 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #8e6ee0, #6b4cc9);
+      box-shadow: 0 8px 20px rgba(118, 85, 212, 0.3);
+      
+      .btn-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .main-content {
+    .users-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+    }
+
+    .user-card {
+      background: #1a1525;
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      &:hover {
+        transform: translateY(-4px);
+        border-color: rgba(142, 110, 224, 0.3);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        
+        .avatar-circle {
+          width: 50px;
+          height: 50px;
+          border-radius: 14px;
+          background: rgba(255,255,255,0.05);
+          color: #a09eb6;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 800;
+          font-size: 20px;
+          font-family: 'Outfit', sans-serif;
+          border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .user-info {
+          flex: 1;
+          h4 { margin: 0 0 4px 0; color: #fff; font-size: 16px; font-weight: 700; }
+          .username { font-size: 13px; color: #8e6ee0; font-weight: 600; }
+        }
+
+        .badge-role {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          background: rgba(233, 30, 99, 0.1);
+          color: #f48fb1;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 700;
+          
+          .badge-icon { width: 14px; height: 14px; }
+        }
+      }
+
+      .card-permissions {
+        background: #130e1d;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255,255,255,0.02);
+        
+        .perm-title {
+          font-size: 11px;
+          color: #6b6680;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-weight: 700;
+          margin-bottom: 12px;
+        }
+
+        .perm-chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+
+          .chip {
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #d0cce6;
+
+            &.all {
+              background: rgba(3, 218, 198, 0.1);
+              border-color: rgba(3, 218, 198, 0.3);
+              color: #03dac6;
+            }
+            &.empty {
+              background: transparent;
+              border-color: transparent;
+              color: #6b6680;
+              font-style: italic;
+            }
+          }
+        }
+      }
+
+      .card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        padding-top: 16px;
+
+        .action-btn {
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+          background: rgba(255,255,255,0.05);
+          color: #a09eb6;
+          
+          &:hover.edit { background: rgba(142, 110, 224, 0.2); color: #b7a0f0; }
+          &:hover.delete { background: rgba(207, 102, 121, 0.2); color: #ff8fa3; }
+          
+          lucide-icon { width: 18px; height: 18px; }
+        }
+      }
+
+      &.is-superadmin {
+        border-color: rgba(233, 30, 99, 0.3);
+        box-shadow: 0 4px 20px rgba(233, 30, 99, 0.05);
+        
+        .card-header .avatar-circle {
+          background: linear-gradient(135deg, rgba(233, 30, 99, 0.2), rgba(156, 39, 176, 0.2));
+          color: #f48fb1;
+          border-color: rgba(233, 30, 99, 0.3);
+        }
+
+        .card-header .badge-role {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding: 6px 14px;
+          background: rgba(233, 30, 99, 0.1);
+          color: #f48fb1;
+          border-radius: 20px;
+          font-size: 13px;
+          font-weight: 700;
+          border: 1px solid rgba(233, 30, 99, 0.2);
+          
+          .badge-icon { 
+            width: 16px; 
+            height: 16px; 
+            min-width: 16px; /* prevent scrunching */
+            margin-top: -2px; /* optical alignment */
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,102 @@
+.confirm-dialog-container {
+  background-color: var(--bg-surface);
+  color: var(--text-body);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 480px;
+
+  .dialog-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .icon-wrapper {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(91, 66, 176, 0.15);
+      color: var(--accent-primary);
+      
+      lucide-icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      &.destructive {
+        background-color: rgba(207, 102, 121, 0.15);
+        color: var(--color-error-text);
+      }
+    }
+
+    .dialog-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin: 0;
+    }
+  }
+
+  .dialog-content {
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 0;
+    margin-bottom: 0;
+
+    button {
+      height: 48px;
+      padding: 0 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+
+    .cancel-btn {
+      color: var(--text-heading);
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+
+      &:hover {
+        background-color: var(--bg-base);
+      }
+    }
+
+    .confirm-btn-primary {
+      background-color: var(--accent-primary);
+      color: var(--text-heading);
+      
+      &:hover {
+        background-color: var(--accent-hover);
+      }
+    }
+
+    .confirm-btn-destructive {
+      background-color: var(--color-error-bg);
+      color: white;
+      
+      &:hover {
+        background-color: #e57373;
+        box-shadow: 0 4px 12px rgba(207, 102, 121, 0.3);
+      }
+    }
+  }
+}

@@ -1,0 +1,174 @@
+<div class="page-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="title-section">
+      <button mat-icon-button class="back-btn" (click)="onCancel()" type="button" aria-label="Retour">
+        <lucide-icon [name]="arrowLeftIcon"></lucide-icon>
+      </button>
+      <div>
+        <h1 class="page-title">{{ isEditMode ? 'Modifier un Employé' : 'Ajouter un Employé' }}</h1>
+        <p class="page-subtitle">{{ isEditMode ? 'Mettez à jour les informations du dossier' : 'Remplissez les informations pour créer un nouveau dossier' }}</p>
+      </div>
+    </div>
+    <div class="action-section">
+      <button mat-button class="btn-cancel" (click)="onCancel()" type="button">Annuler</button>
+      <button mat-flat-button color="primary" class="btn-submit" [disabled]="personnelForm.invalid || loading" (click)="onSubmit()" type="button">
+        {{ isEditMode ? 'Enregistrer' : 'Créer l\'employé' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Content -->
+  <div class="form-content-container">
+    <form [formGroup]="personnelForm" class="personnel-grid-form">
+      
+      <!-- Left Column: Identity & Contact -->
+      <div class="form-column">
+        <!-- Section: Informations Générales -->
+        <div class="form-card">
+          <div class="card-header">
+            <lucide-icon [name]="userIcon"></lucide-icon>
+            <h2>Informations Générales</h2>
+          </div>
+          <div class="card-body">
+            <mat-form-field appearance="outline" class="form-field full-width">
+              <mat-label>Matricule / ID Employé</mat-label>
+              <input matInput formControlName="matricule" placeholder="Ex: EMP-1234">
+              <mat-error *ngIf="personnelForm.get('matricule')?.hasError('required')">Requis</mat-error>
+            </mat-form-field>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Prénom</mat-label>
+                <input matInput formControlName="firstName" placeholder="Ex: Jean">
+                <mat-error *ngIf="personnelForm.get('firstName')?.hasError('required')">Requis</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Nom</mat-label>
+                <input matInput formControlName="lastName" placeholder="Ex: Dupont">
+                <mat-error *ngIf="personnelForm.get('lastName')?.hasError('required')">Requis</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Coordonnées (Optional) -->
+        <div class="form-card">
+          <div class="card-header">
+            <lucide-icon [name]="userIcon"></lucide-icon>
+            <h2>Coordonnées</h2>
+            <span class="optional-badge">Optionnel</span>
+          </div>
+          <div class="card-body">
+            <mat-form-field appearance="outline" class="form-field full-width">
+              <mat-label>Email professionnel</mat-label>
+              <input matInput type="email" formControlName="email" placeholder="jean.dupont@entreprise.com">
+              <mat-error *ngIf="personnelForm.get('email')?.hasError('email')">Format invalide</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field full-width">
+              <mat-label>Téléphone</mat-label>
+              <input matInput type="tel" formControlName="phone" placeholder="+33 6 12 34 56 78">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Role & Bio -->
+      <div class="form-column">
+        <!-- Section: Rôle & Entreprise -->
+        <div class="form-card">
+          <div class="card-header">
+            <lucide-icon [name]="briefcaseIcon"></lucide-icon>
+            <h2>Rôle & Département</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Poste</mat-label>
+                <input matInput formControlName="position" placeholder="Ex: Développeur Senior">
+                <mat-error *ngIf="personnelForm.get('position')?.hasError('required')">Requis</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Département</mat-label>
+                <mat-select formControlName="department">
+                  <mat-option *ngFor="let dept of departments" [value]="dept.name">
+                    {{ dept.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="personnelForm.get('department')?.hasError('required')">Requis</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Accès Web & Mobile -->
+        <div class="form-card">
+          <div class="card-header">
+            <lucide-icon [name]="smartphoneIcon"></lucide-icon>
+            <h2>Pointage Mobile & Web</h2>
+          </div>
+          <div class="card-body">
+            <mat-form-field appearance="outline" class="form-field full-width">
+              <mat-label>Code PIN (4 chiffres)</mat-label>
+              <input matInput formControlName="pinCode" placeholder="Ex: 1234" maxlength="4">
+              <mat-icon matPrefix><lucide-icon [name]="keyIcon" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; margin-right: 8px;"></lucide-icon></mat-icon>
+              <mat-hint>Utilisé par l'employé pour pointer depuis son smartphone ou PC.</mat-hint>
+              <mat-error *ngIf="personnelForm.get('pinCode')?.hasError('pattern')">Doit contenir exactement 4 chiffres</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Section: Identifiants Pointeuse Physique -->
+        <div class="form-card">
+          <div class="card-header">
+            <lucide-icon [name]="fingerprintIcon"></lucide-icon>
+            <h2>Pointeuse Physique (Terminal)</h2>
+            <span class="optional-badge">Synchronisé</span>
+          </div>
+          <div class="card-body">
+            <p class="section-desc" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Ces champs sont généralement remplis automatiquement lors de l'enregistrement sur la pointeuse physique.</p>
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Carte Magnétique / RFID</mat-label>
+                <input matInput formControlName="cardNumber" placeholder="Ex: 0012345678">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Tag NFC</mat-label>
+                <input matInput formControlName="nfcTag" placeholder="Ex: 04:A1:B2:C3:D4:E5:F6">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>ID Empreinte (Fingerprint)</mat-label>
+                <input matInput formControlName="fingerprintId" placeholder="Ex: FP-8472">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Face ID</mat-label>
+                <input matInput formControlName="faceId" placeholder="Ex: FID-1002">
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="form-field full-width">
+              <mat-label>Méthode de Pointage par Défaut</mat-label>
+              <mat-select formControlName="defaultClockInMethod">
+                <mat-option value="WEB_MOBILE">Application Mobile Web</mat-option>
+                <mat-option value="BIOMETRIC">Empreinte Digitale</mat-option>
+                <mat-option value="FACE_ID">Reconnaissance Faciale</mat-option>
+                <mat-option value="CARD">Carte Magnétique / RFID</mat-option>
+                <mat-option value="NFC">NFC (Téléphone)</mat-option>
+                <mat-option value="MANUAL">Manuel (Admin)</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="mobile-login-container">
+  
+  <div class="login-header">
+    <div class="logo-wrapper">
+      <div class="logo-circle">
+        <lucide-icon [img]="clockIcon" class="logo-icon"></lucide-icon>
+      </div>
+    </div>
+    <h1>TimeShift Mobile</h1>
+    <p>Authentification Sécurisée</p>
+  </div>
+
+  <form [formGroup]="loginForm" class="login-form">
+    
+    <!-- Premium Custom Input -->
+    <div class="custom-input-group">
+      <div class="custom-input-wrapper">
+        <lucide-icon [img]="userIcon" class="input-icon"></lucide-icon>
+        <input type="text" formControlName="matricule" placeholder="Matricule (ex: EMP-1234)" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Custom PIN Display -->
+    <div class="pin-display-container">
+      <div class="pin-dot" [class.filled]="pinCodeDisplay.length >= 1"></div>
+      <div class="pin-dot" [class.filled]="pinCodeDisplay.length >= 2"></div>
+      <div class="pin-dot" [class.filled]="pinCodeDisplay.length >= 3"></div>
+      <div class="pin-dot" [class.filled]="pinCodeDisplay.length >= 4"></div>
+    </div>
+    
+    <!-- Hidden form control to keep Angular sync -->
+    <input type="text" formControlName="pinCode" style="display:none">
+
+    <div class="error-message glass-panel" *ngIf="errorMessage">
+      <lucide-icon [img]="alertIcon" class="error-icon"></lucide-icon>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Numpad Grid - Glassmorphism -->
+    <div class="numpad-grid">
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(1)">1</button>
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(2)">2</button>
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(3)">3</button>
+      
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(4)">4</button>
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(5)">5</button>
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(6)">6</button>
+      
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(7)">7</button>
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(8)">8</button>
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(9)">9</button>
+      
+      <div></div> <!-- Empty spacer -->
+      
+      <button type="button" class="numpad-btn glass-btn" (click)="onNumpadClick(0)">0</button>
+      
+      <button type="button" class="numpad-btn delete-btn" (click)="onNumpadDelete()">
+        <lucide-icon [name]="deleteIcon"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- Submit Button Glowing -->
+    <div class="action-container">
+      <button type="button" class="submit-btn glowing-btn" [class.disabled]="loginForm.invalid || loading" (click)="onSubmit()">
+        <lucide-icon [name]="loginIcon" *ngIf="!loading"></lucide-icon>
+        <div class="spinner-ring" *ngIf="loading"></div>
+        <span>{{ loading ? 'Vérification...' : 'Continuer' }}</span>
+      </button>
+    </div>
+    
+  </form>
+</div>

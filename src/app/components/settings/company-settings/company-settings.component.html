@@ -1,0 +1,155 @@
+<div class="settings-container">
+  <div class="page-header">
+    <div class="title-container">
+      <div class="icon-wrapper">
+        <lucide-icon [name]="settingsIcon"></lucide-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Paramètres de l'entreprise</h1>
+        <p class="page-subtitle">Configurez le planning hebdomadaire et les règles de ponctualité</p>
+      </div>
+    </div>
+    
+    <button mat-flat-button color="primary" class="save-btn-top" (click)="onSubmit()" [disabled]="!settingsForm.valid || isLoading">
+      <lucide-icon [name]="saveIcon"></lucide-icon>
+      {{ isLoading ? 'En cours...' : 'Enregistrer' }}
+    </button>
+  </div>
+
+  <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="settings-content">
+    
+    <!-- Mobile Punch Settings -->
+    <div class="settings-section mobile-punch-section">
+      <div class="section-header">
+        <lucide-icon [name]="smartphoneIcon" class="section-icon"></lucide-icon>
+        <div class="header-text">
+          <h3>Pointage Mobile & Web</h3>
+          <p>Paramètres de sécurité pour le pointage à distance depuis un smartphone.</p>
+        </div>
+      </div>
+      <div class="section-body mobile-settings-body">
+        <div class="setting-row">
+          <div class="setting-info">
+            <h4>Géolocalisation Obligatoire</h4>
+            <span class="setting-desc">L'employé devra obligatoirement autoriser le GPS pour valider son pointage.</span>
+          </div>
+          <mat-slide-toggle formControlName="isGeolocationMandatoryForMobilePunch" color="primary"></mat-slide-toggle>
+        </div>
+
+        <!-- Lieux Autorisés (Geofencing) -->
+        <div class="setting-row location-settings" *ngIf="settingsForm.get('isGeolocationMandatoryForMobilePunch')?.value">
+          <div class="setting-info full-width-info">
+            <div class="location-header">
+              <div class="location-title">
+                <h4>Zones Géographiques Autorisées (Geofencing)</h4>
+                <p class="setting-desc">Si vous définissez des lieux de travail, le pointage mobile sera automatiquement <strong>refusé</strong> si l'employé n'est pas dans le rayon configuré.</p>
+              </div>
+              <button type="button" class="add-loc-btn" (click)="addLocation()">
+                <lucide-icon [name]="addIcon" class="icon-sm"></lucide-icon> Ajouter un magasin/lieu
+              </button>
+            </div>
+            
+            <div formArrayName="allowedLocations" class="locations-list">
+              <div *ngFor="let locCtrl of allowedLocations.controls; let i = index" [formGroupName]="i" class="location-card">
+                <div class="loc-inputs-row">
+                  <div class="input-col loc-name">
+                    <label>Nom du Site*</label>
+                    <input type="text" formControlName="name" placeholder="Ex: Boutique Principale" class="custom-card-input">
+                  </div>
+                  <div class="input-col">
+                    <label>Latitude*</label>
+                    <input type="number" step="any" formControlName="latitude" placeholder="Ex: 48.8566" class="custom-card-input">
+                  </div>
+                  <div class="input-col">
+                    <label>Longitude*</label>
+                    <input type="number" step="any" formControlName="longitude" placeholder="Ex: 2.3522" class="custom-card-input">
+                  </div>
+                  <div class="input-col radius-col">
+                    <label>Rayon (m)*</label>
+                    <input type="number" formControlName="radiusMeters" placeholder="ex: 50" class="custom-card-input">
+                  </div>
+                  <button type="button" class="del-loc-btn" (click)="removeLocation(i)" title="Supprimer">
+                    <lucide-icon [name]="deleteIcon"></lucide-icon>
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="allowedLocations.controls.length === 0" class="empty-locations-alert">
+                <lucide-icon [name]="mapPinIcon"></lucide-icon>
+                <span>Aucune zone définie. La position GPS sera enregistrée pour vérification visuelle, sans restriction bloquante de distance.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lateness Section -->
+    <div class="settings-section lateness-section">
+      <div class="section-header">
+        <lucide-icon [name]="clockIcon" class="section-icon"></lucide-icon>
+        <div class="header-text">
+          <h3>Ponctualité & Retards</h3>
+          <p>Définissez la tolérance avant qu'un pointage soit considéré en retard.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <mat-form-field appearance="outline" class="lateness-field">
+          <mat-label>Tolérance de retard (minutes)</mat-label>
+          <input matInput type="number" formControlName="latenessGracePeriodMinutes" min="0">
+          <mat-hint>Exemple: 15 minutes accordées avant pénalité.</mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Weekly Schedule Section -->
+    <div class="settings-section schedule-section">
+      <div class="section-header">
+        <lucide-icon [name]="calendarIcon" class="section-icon"></lucide-icon>
+        <div class="header-text">
+          <h3>Horaires de travail (Lundi - Dimanche)</h3>
+          <p>Activez les jours ouverts et définissez les horaires du matin et de l'après-midi.</p>
+        </div>
+      </div>
+
+      <div formArrayName="weeklySchedule" class="days-grid">
+        <div *ngFor="let dayCtrl of weeklySchedule.controls; let i = index" 
+             [formGroupName]="i" 
+             class="day-card" 
+             [class.inactive]="!dayCtrl.get('isActive')?.value">
+          
+          <div class="day-card-header">
+            <h4>{{ dayNames[dayCtrl.get('dayOfWeek')?.value] }}</h4>
+            <mat-slide-toggle formControlName="isActive" color="primary"></mat-slide-toggle>
+          </div>
+
+          <div class="day-card-body" *ngIf="dayCtrl.get('isActive')?.value">
+            <div class="time-block">
+              <span class="block-label">Matin</span>
+              <div class="time-inputs">
+                <input type="time" formControlName="morningStart" class="time-input">
+                <span class="separator">-</span>
+                <input type="time" formControlName="morningEnd" class="time-input">
+              </div>
+            </div>
+            
+            <div class="time-block">
+              <span class="block-label">Aprem</span>
+              <div class="time-inputs">
+                <input type="time" formControlName="afternoonStart" class="time-input">
+                <span class="separator">-</span>
+                <input type="time" formControlName="afternoonEnd" class="time-input">
+              </div>
+            </div>
+          </div>
+
+          <div class="day-card-body closed-body" *ngIf="!dayCtrl.get('isActive')?.value">
+            <div class="closed-badge">Jour de repos</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>

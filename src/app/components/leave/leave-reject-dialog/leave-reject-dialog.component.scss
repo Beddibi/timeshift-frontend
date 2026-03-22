@@ -1,0 +1,199 @@
+@use '@angular/material' as mat;
+
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-surface);
+  color: var(--text-body);
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 500px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-subtle);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, rgba(207, 102, 121, 0.1), transparent);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  
+  .header-icon-bg {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #cf6679, #b94f61);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    box-shadow: 0 4px 12px rgba(207, 102, 121, 0.3);
+    
+    .header-icon {
+      color: white;
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
+  .header-text {
+    flex: 1;
+    
+    h2 {
+      margin: 0 0 4px 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      letter-spacing: -0.01em;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: var(--text-muted);
+    
+    &:hover {
+      color: var(--text-heading);
+      background-color: var(--bg-elevated);
+    }
+    
+    .close-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.dialog-content {
+  padding: 32px;
+  flex: 1;
+}
+
+.leave-details {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+
+  .detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .label {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .value {
+      color: var(--text-heading);
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-form-field.reason-input {
+  width: 100%;
+  
+  .input-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    color: var(--text-muted);
+    margin-top: -30px; // align top for textarea
+  }
+
+  ::ng-deep .mdc-text-field--outlined {
+    --mdc-outlined-text-field-container-shape: 10px;
+    --mdc-outlined-text-field-label-text-color: var(--text-muted);
+    --mdc-outlined-text-field-hover-label-text-color: var(--text-heading);
+    --mdc-outlined-text-field-focus-label-text-color: #cf6679;
+    --mdc-outlined-text-field-outline-color: var(--border-subtle);
+    --mdc-outlined-text-field-hover-outline-color: var(--text-muted);
+    --mdc-outlined-text-field-focus-outline-color: #cf6679;
+    --mdc-outlined-text-field-input-text-color: var(--text-heading);
+    --mdc-outlined-text-field-caret-color: #cf6679;
+    
+    .mdc-notched-outline__leading, 
+    .mdc-notched-outline__notch, 
+    .mdc-notched-outline__trailing {
+      border-color: var(--border-subtle);
+    }
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 24px 32px;
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  
+  button {
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    
+    &.cancel-btn {
+      color: var(--text-heading);
+      border-color: var(--border-subtle);
+      
+      &:hover {
+        background-color: var(--bg-elevated);
+      }
+    }
+    
+    &.submit-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #cf6679, #b94f61);
+      color: white;
+      
+      .btn-icon {
+        width: 18px;
+        height: 18px;
+      }
+      
+      &:hover:not([disabled]) {
+        box-shadow: 0 4px 12px rgba(207, 102, 121, 0.4);
+        transform: translateY(-1px);
+      }
+      
+      &:active:not([disabled]) {
+        transform: translateY(0);
+      }
+      
+      &[disabled] {
+        background: var(--bg-elevated);
+        color: var(--text-muted);
+        box-shadow: none;
+      }
+    }
+  }
+}

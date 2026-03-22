@@ -1,0 +1,64 @@
+<div class="mobile-punch-container">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="user-info">
+      <div class="avatar">{{ user?.firstName?.charAt(0) || 'U' }}</div>
+      <div>
+        <p class="greeting">Bonjour,</p>
+        <p class="name">{{ user?.firstName }} {{ user?.lastName }}</p>
+      </div>
+    </div>
+    <button mat-icon-button class="logout-btn" (click)="logout()">
+      <lucide-icon [name]="logoutIcon"></lucide-icon>
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    
+    <!-- Real-time Clock -->
+    <div class="clock-display">
+      <h1 class="time">{{ currentTime | date:'HH:mm:ss' }}</h1>
+      <p class="date">{{ currentTime | date:'EEEE d MMMM y' : '' : 'fr-FR' | titlecase }}</p>
+    </div>
+
+    <!-- GPS Info -->
+    <div class="gps-info">
+      <lucide-icon [name]="mapPinIcon" class="icon-small"></lucide-icon>
+      <span>Autorisation GPS requise</span>
+    </div>
+
+    <!-- The Big Button -->
+    <div class="punch-action-area">
+      <!-- Idle State -->
+      <button 
+        *ngIf="punchStatus === 'idle'"
+        class="big-punch-btn" 
+        [class.loading]="loading"
+        (click)="punch()" 
+        [disabled]="loading">
+        <div class="btn-content" *ngIf="!loading">
+          <lucide-icon [name]="clockIcon" class="huge-icon"></lucide-icon>
+          <span class="btn-text">Pointer</span>
+        </div>
+        <mat-spinner diameter="40" *ngIf="loading" color="warn"></mat-spinner>
+      </button>
+
+      <!-- Success State -->
+      <div class="status-card success" *ngIf="punchStatus === 'success'">
+        <lucide-icon [name]="checkIcon" class="status-icon"></lucide-icon>
+        <h3>Pointage Validé</h3>
+        <p>{{ lastPunchType === 'IN' ? 'Entrée' : 'Sortie' }} enregistrée à {{ currentTime | date:'HH:mm' }}</p>
+        <p class="small-text">{{ punchMessage }}</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="status-card error" *ngIf="punchStatus === 'error'">
+        <lucide-icon [name]="mapPinIcon" class="status-icon"></lucide-icon>
+        <h3>Échec du pointage</h3>
+        <p>{{ punchMessage }}</p>
+      </div>
+    </div>
+
+  </div>
+</div>

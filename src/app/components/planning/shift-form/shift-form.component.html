@@ -1,0 +1,198 @@
+<div class="dialog-container premium-shift-dialog">
+  
+  <!-- Premium Header -->
+  <div class="dialog-header-banner">
+    <div class="header-bg-glow"></div>
+    <div class="header-content">
+      <div class="header-main-info">
+        <div class="icon-wrapper">
+          <lucide-icon [img]="calendarIcon" class="header-icon"></lucide-icon>
+        </div>
+        <div class="header-text-block">
+          <h2 class="dialog-title">
+            {{ isEditing ? 'Modifier la Session' : 'Nouvelle Session' }}
+          </h2>
+          <p class="dialog-subtitle">
+            {{ isEditing ? 'Mettez à jour les horaires de cet employé.' : 'Planifiez intelligemment les horaires.' }}
+          </p>
+        </div>
+      </div>
+      <button mat-icon-button class="close-btn" (click)="onCancel()" type="button" aria-label="Fermer">
+        <lucide-icon [img]="closeIcon"></lucide-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-dialog-content class="dialog-body">
+    <form [formGroup]="shiftForm" class="shift-form">
+      
+      <!-- Section 1: Qui ? -->
+      <div class="premium-card">
+        <div class="card-header">
+          <div class="card-icon-box"><lucide-icon [img]="userIcon"></lucide-icon></div>
+          <div class="card-title-group">
+            <h3>Employé Concerné</h3>
+            <span class="card-desc">Sélectionnez le membre du personnel</span>
+          </div>
+        </div>
+        <div class="card-body no-pad-top">
+          <!-- Visual Employee Selection -->
+          <div class="visual-personnel-picker">
+            <div class="picker-search-bar" *ngIf="!isEditing || personnelList.length > 5">
+               <lucide-icon [img]="searchIcon"></lucide-icon>
+               <input type="text" placeholder="Rechercher par nom ou poste..." (input)="filterPersonnel($event)">
+               <div class="selection-actions" *ngIf="!isEditing && filteredPersonnel.length > 0">
+                 <button type="button" class="text-action" (click)="selectAllFiltered()">Tout sél.</button>
+                 <button type="button" class="text-action" (click)="deselectAllFiltered()">Aucun</button>
+               </div>
+            </div>
+
+            <div class="chips-container">
+              <div class="empty-state" *ngIf="filteredPersonnel.length === 0">Aucun collaborateur trouvé.</div>
+              <div class="emp-chip" *ngFor="let p of filteredPersonnel" 
+                   [class.selected]="isPersonnelSelected(p._id)"
+                   (click)="togglePersonnel(p._id)">
+                
+                <div class="chip-avatar">{{ p.firstName.charAt(0) }}{{ p.lastName.charAt(0) }}</div>
+                <div class="chip-info">
+                  <span class="chip-name">{{ p.firstName }} {{ p.lastName }}</span>
+                  <span class="chip-role">{{ p.position }}</span>
+                </div>
+                
+                <div class="chip-check" *ngIf="isPersonnelSelected(p._id)">
+                   <lucide-icon [img]="checkIcon"></lucide-icon>
+                </div>
+              </div>
+            </div>
+            <mat-error *ngIf="selectedPersonnelIds.length === 0 && shiftForm.touched" class="custom-error">
+              Veuillez sélectionner au moins un employé.
+            </mat-error>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Quand ? -->
+      <div class="premium-card">
+        <div class="card-header">
+          <div class="card-icon-box"><lucide-icon [img]="dayIcon"></lucide-icon></div>
+          <div class="card-title-group">
+            <h3>Date & Horaires</h3>
+            <span class="card-desc">Définissez la période de travail (auto-calculée)</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-row date-period-row">
+            <mat-form-field appearance="outline" class="form-field date-field">
+              <mat-label>Période (Du - Au)</mat-label>
+              <mat-date-range-input [rangePicker]="picker">
+                <input matStartDate formControlName="startDate" placeholder="Début">
+                <input matEndDate formControlName="endDate" placeholder="Fin">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field period-field">
+              <mat-label>Période (Pré-remplissage)</mat-label>
+              <mat-select formControlName="period">
+                <mat-option value="FULL_DAY">Journée complète</mat-option>
+                <mat-option value="MORNING">Matin uniquement</mat-option>
+                <mat-option value="AFTERNOON">Après-midi uniquement</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Smart Warning -->
+          <div class="smart-alert closed-alert" *ngIf="selectedDayIsClosed">
+            <lucide-icon [img]="alertIcon" class="alert-icon"></lucide-icon>
+            <div class="alert-text">
+              <strong>Jour de Repos</strong>
+              <span>Ce jour est paramétré comme "Fermé" pour l'entreprise.</span>
+            </div>
+          </div>
+
+          <div class="form-row time-row">
+            <div class="time-block">
+              <label>Début</label>
+              <div class="time-input-wrapper">
+                <lucide-icon [img]="clockIcon"></lucide-icon>
+                <input type="time" formControlName="startTime" class="native-time-input">
+              </div>
+            </div>
+            
+            <div class="time-divider">
+              <div class="line"></div>
+              <span>à</span>
+              <div class="line"></div>
+            </div>
+            
+            <div class="time-block">
+              <label>Fin</label>
+              <div class="time-input-wrapper">
+                <lucide-icon [img]="clockIcon"></lucide-icon>
+                <input type="time" formControlName="endTime" class="native-time-input">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Détails -->
+      <div class="premium-card">
+        <div class="card-header">
+          <div class="card-icon-box"><lucide-icon [img]="notesIcon"></lucide-icon></div>
+          <div class="card-title-group">
+            <h3>Nature & Instructions</h3>
+            <span class="card-desc">Précisez le type de session ou d'absence</span>
+          </div>
+        </div>
+        <div class="card-body">
+           <!-- Beautiful Nature Grid -->
+           <div class="nature-grid">
+             <div class="nature-card" 
+                  [class.active]="shiftForm.get('type')?.value === 'NORMAL'"
+                  (click)="shiftForm.patchValue({type: 'NORMAL'})">
+               <div class="nc-icon type-normal"><lucide-icon [img]="normalIcon"></lucide-icon></div>
+               <span class="nc-text">Travail Normal</span>
+             </div>
+
+             <div class="nature-card" 
+                  [class.active]="shiftForm.get('type')?.value === 'SICK'"
+                  (click)="shiftForm.patchValue({type: 'SICK'})">
+               <div class="nc-icon type-sick"><lucide-icon [img]="sickIcon"></lucide-icon></div>
+               <span class="nc-text">Maladie</span>
+             </div>
+
+             <div class="nature-card" 
+                  [class.active]="shiftForm.get('type')?.value === 'ABSENT'"
+                  (click)="shiftForm.patchValue({type: 'ABSENT'})">
+               <div class="nc-icon type-absent"><lucide-icon [img]="absentIcon"></lucide-icon></div>
+               <span class="nc-text">Absence Inst.</span>
+             </div>
+
+             <div class="nature-card" 
+                  [class.active]="shiftForm.get('type')?.value === 'HOLIDAY'"
+                  (click)="shiftForm.patchValue({type: 'HOLIDAY'})">
+               <div class="nc-icon type-holiday"><lucide-icon [img]="holidayIcon"></lucide-icon></div>
+               <span class="nc-text">Jour Férié</span>
+             </div>
+           </div>
+
+          <mat-form-field appearance="outline" class="form-field full-width notes-field">
+            <mat-label>Motif / Instructions (Optionnel)</mat-label>
+            <textarea matInput formControlName="notes" rows="2" placeholder="Ex: Remplacement de M. Dupont, Motif d'absence..."></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <div class="dialog-actions premium-actions" style="display:flex; justify-content: flex-end; gap: 8px; padding: 16px;">
+    <button mat-button class="cancel-btn" (click)="onCancel()" type="button">Annuler</button>
+    <button mat-flat-button class="submit-btn" [disabled]="shiftForm.invalid || selectedPersonnelIds.length === 0" (click)="onSubmit()" type="button">
+      {{ isEditing ? 'Mettre à jour' : 'Ajouter au planning' }}
+      <lucide-icon [img]="checkIcon" class="btn-icon"></lucide-icon>
+    </button>
+  </div>
+</div>

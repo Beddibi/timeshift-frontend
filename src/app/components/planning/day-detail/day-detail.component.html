@@ -1,0 +1,74 @@
+<div class="sidebar-container">
+  <div class="sidebar-header">
+    <div class="title-group">
+      <h2>Détail de la journée</h2>
+      <p class="subtitle">{{ date | date:'EEEE d MMMM yyyy':'':'fr' }}</p>
+    </div>
+    <button mat-icon-button (click)="onClose()" class="close-btn">
+      <lucide-icon [img]="xIcon"></lucide-icon>
+    </button>
+  </div>
+
+  <div class="sidebar-body">
+    <div class="list-container">
+      <ng-container *ngFor="let item of daySummary">
+        <div class="employee-card" *ngIf="item.shifts.length > 0 || item.attendances.length > 0">
+          
+          <div class="emp-header">
+            <div class="emp-info">
+              <div class="avatar">{{ item.person.firstName.charAt(0) }}{{ item.person.lastName.charAt(0) }}</div>
+              <div>
+                <span class="name">{{ item.person.firstName }} {{ item.person.lastName }}</span>
+                <span class="role">{{ item.person.position }}</span>
+              </div>
+            </div>
+            
+            <div class="status-badge" [ngClass]="item.status.toLowerCase()">
+              {{ item.status === 'AUCUN_PLANNING' ? 'Pas de planning' :
+                 item.status === 'PRESENT' ? 'Présent' :
+                 item.status === 'INCOMPLET' ? 'Pointage manquant' :
+                 item.status === 'ABSENT' ? 'Absent' : 'Non planifié' }}
+            </div>
+          </div>
+
+          <div class="emp-details">
+            <div class="detail-col">
+              <h4>Prévu</h4>
+              <div class="shift-item" *ngFor="let s of item.shifts">
+                {{ s.startTime }} - {{ s.endTime }} <span class="type-tag" *ngIf="s.type !== 'NORMAL'">{{ s.type }}</span>
+              </div>
+              <div class="empty-state" *ngIf="item.shifts.length === 0">Rien de prévu</div>
+            </div>
+            
+            <div class="detail-divider"></div>
+
+            <div class="detail-col">
+              <div class="col-header">
+                <h4>Réel (Pointages)</h4>
+                <button mat-icon-button class="mini-btn" (click)="addAttendance.emit({personnelId: item.person._id})" title="Ajouter un pointage manuel">
+                  <lucide-icon [img]="plusIcon"></lucide-icon>
+                </button>
+              </div>
+              <div class="att-list">
+                <div class="att-item clickable" *ngFor="let a of item.attendances" [ngClass]="a.type === 'IN' ? 'in' : 'out'" (click)="editAttendance.emit(a)">
+                  <div class="dot"></div>
+                  <span>{{ a.punchTime | date:'HH:mm' }}</span>
+                  <span class="type">{{ a.type === 'IN' ? 'ARR' : 'DÉP' }}</span>
+                  <span class="manual-tag" *ngIf="a.method === 'MANUAL'">Man.</span>
+                </div>
+                <div class="empty-state" *ngIf="item.attendances.length === 0">Aucun pointage</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </ng-container>
+
+      <div class="global-empty-state" *ngIf="daySummary.length === 0">
+        <lucide-icon [img]="clockIcon"></lucide-icon>
+        <p>Aucune donnée pour ce jour</p>
+      </div>
+
+    </div>
+  </div>
+</div>

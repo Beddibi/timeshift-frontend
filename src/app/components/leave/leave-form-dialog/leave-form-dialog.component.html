@@ -1,0 +1,88 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="header-icon-bg">
+      <lucide-icon [name]="calendarIcon" class="header-icon"></lucide-icon>
+    </div>
+    <div class="header-text">
+      <h2>{{ data.leave ? 'Modifier le congé' : 'Nouvelle Demande de Congé' }}</h2>
+      <p>Saisissez les informations pour la période de congé.</p>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="onCancel()" tabindex="-1">
+      <lucide-icon [name]="closeIcon" class="close-icon"></lucide-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    
+    <div class="alert-box error" *ngIf="leaveForm.errors?.['dateRangeInvalid'] && (leaveForm.touched || leaveForm.dirty)">
+      <lucide-icon [name]="alertIcon" class="alert-icon"></lucide-icon>
+      <div class="alert-content">
+        <h4>Plage de dates invalide</h4>
+        <p>La date de fin doit être ultérieure à la date de début.</p>
+      </div>
+    </div>
+
+    <form [formGroup]="leaveForm" class="leave-form" (ngSubmit)="onSubmit()">
+      
+      <mat-form-field appearance="outline" class="form-field full-width">
+        <mat-label>Rechercher un employé</mat-label>
+        <input type="text" matInput [formControl]="employeeSearchCtrl" [matAutocomplete]="auto">
+        <lucide-icon [name]="searchIcon" matPrefix class="input-icon"></lucide-icon>
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let emp of filteredPersonnel | async" [value]="emp">
+            <div class="employee-option">
+              <div class="emp-avatar">{{ emp.firstName.charAt(0) }}{{ emp.lastName.charAt(0) }}</div>
+              <span>{{ emp.firstName }} {{ emp.lastName }}</span>
+            </div>
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="leaveForm.get('employeeId')?.hasError('required')">L'employé est requis</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field full-width">
+        <mat-label>Type de congé</mat-label>
+        <mat-select formControlName="leaveType">
+          <mat-option *ngFor="let type of leaveTypes" [value]="type.value">
+            {{ type.label }}
+          </mat-option>
+        </mat-select>
+        <lucide-icon [name]="fileTextIcon" matPrefix class="input-icon"></lucide-icon>
+        <mat-error *ngIf="leaveForm.get('leaveType')?.hasError('required')">Le type est requis</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field full-width">
+        <mat-label>Période du congé</mat-label>
+        <mat-date-range-input [rangePicker]="picker" [min]="minDate">
+          <input matStartDate formControlName="startDate" placeholder="Date de début">
+          <input matEndDate formControlName="endDate" placeholder="Date de fin">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+        <mat-error *ngIf="leaveForm.get('startDate')?.hasError('required') || leaveForm.get('endDate')?.hasError('required')">Les deux dates sont requises</mat-error>
+      </mat-form-field>
+
+      <div class="calculated-days-card" *ngIf="leaveForm.get('startDate')?.value && leaveForm.get('endDate')?.value && !leaveForm.errors?.['dateRangeInvalid']">
+        <div class="days-icon-box">
+          <lucide-icon [name]="clockIcon"></lucide-icon>
+        </div>
+        <div class="days-text">
+          <span class="days-label">Durée estimée</span>
+          <span class="days-value">{{ calculatedDays }} jour(s)</span>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="form-field full-width">
+        <mat-label>Motif / Commentaire (Optionnel)</mat-label>
+        <textarea matInput formControlName="reason" placeholder="Précisez la raison si nécessaire..." rows="3"></textarea>
+      </mat-form-field>
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-button class="cancel-btn" (click)="onCancel()">Annuler</button>
+    <button mat-flat-button class="submit-btn" [disabled]="leaveForm.invalid" (click)="onSubmit()">
+      <lucide-icon [name]="calendarIcon" class="btn-icon"></lucide-icon>
+      {{ data.leave ? 'Mettre à jour' : 'Soumettre' }}
+    </button>
+  </div>
+</div>

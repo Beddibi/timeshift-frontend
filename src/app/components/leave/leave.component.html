@@ -1,0 +1,108 @@
+<div class="page-container">
+  <div class="header-section">
+    <div class="title-group">
+      <h1 class="page-title">Gestion des Congés</h1>
+      <p class="page-subtitle">Suivez et validez les absences de vos collaborateurs</p>
+    </div>
+    
+    <button class="add-button" (click)="openLeaveDialog()">
+      <lucide-icon [name]="plusIcon"></lucide-icon>
+      Nouvelle Demande
+    </button>
+  </div>
+
+  <div class="table-card">
+    <div class="card-header">
+      <div class="filters-container">
+        <mat-form-field appearance="outline" class="filter-field">
+          <lucide-icon [name]="filterIcon" matPrefix class="filter-icon"></lucide-icon>
+          <mat-select [(ngModel)]="filterStatus" (selectionChange)="loadLeaves()">
+            <mat-option value="">Tous les statuts</mat-option>
+            <mat-option value="PENDING">En Attente</mat-option>
+            <mat-option value="APPROVED">Approuvés</mat-option>
+            <mat-option value="REJECTED">Refusés</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-overlay" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Data Table -->
+    <table class="leave-table" cellSpacing="0" *ngIf="!loading">
+      <thead>
+        <tr>
+          <th style="width: 25%">Employé</th>
+          <th style="width: 15%">Type</th>
+          <th style="width: 25%">Période</th>
+          <th style="width: 15%; text-align: center;">Statut</th>
+          <th style="width: 20%; text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="leaves.length === 0" class="empty-row">
+          <td colspan="5">
+            <div class="empty-state">
+              <lucide-icon [name]="calendarIcon" class="empty-icon"></lucide-icon>
+              <p>Aucune demande de congé trouvée.</p>
+            </div>
+          </td>
+        </tr>
+        
+        <tr *ngFor="let leave of leaves">
+          <td>
+            <div class="user-cell">
+              <div class="user-avatar">
+                {{ getPersonnelName(leave.employeeId).substring(0, 2) }}
+              </div>
+              <div class="user-details">
+                <span class="user-name">{{ getPersonnelName(leave.employeeId) }}</span>
+              </div>
+            </div>
+          </td>
+          
+          <td>
+            <div class="type-badge" [class]="'type-' + leave.leaveType.toLowerCase()">
+              {{ getTypeLabel(leave.leaveType) }}
+            </div>
+          </td>
+          
+          <td>
+            <div class="period-cell">
+              <span class="period-dates">{{ leave.startDate | date:'dd MMM yyyy' }} au {{ leave.endDate | date:'dd MMM yyyy' }}</span>
+              <span class="period-days">{{ leave.totalDays }} jour(s)</span>
+            </div>
+          </td>
+          
+          <td style="text-align: center;">
+            <div class="status-badge" [ngClass]="leave.status.toLowerCase()">
+              {{ getStatusLabel(leave.status) }}
+            </div>
+          </td>
+          
+          <td>
+            <div class="action-buttons">
+              <!-- Pending Actions -->
+              <ng-container *ngIf="leave.status === 'PENDING'">
+                <button class="approve-btn" (click)="approve(leave)" title="Approuver">
+                  <lucide-icon [name]="checkIcon"></lucide-icon>
+                </button>
+                <button class="reject-btn" (click)="reject(leave)" title="Refuser">
+                  <lucide-icon [name]="banIcon"></lucide-icon>
+                </button>
+              </ng-container>
+              
+              <!-- Delete/Cancel Action -->
+              <button class="delete-btn" (click)="deleteLeave(leave)" title="Supprimer la demande" *ngIf="leave.status !== 'APPROVED'">
+                <lucide-icon [name]="deleteIcon"></lucide-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

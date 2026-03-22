@@ -1,0 +1,136 @@
+<div class="dashboard-header">
+  <h1 class="page-title">Tableau de Bord</h1>
+  <p class="page-subtitle">Aperçu en temps réel de votre personnel — {{ stats?.date || 'Chargement...' }}</p>
+</div>
+
+<!-- Loading skeleton -->
+<div *ngIf="loading" class="loading-state">
+  <div class="spinner"></div>
+  <p>Chargement des statistiques...</p>
+</div>
+
+<!-- Error state -->
+<div *ngIf="error" class="error-state">
+  <p>{{ error }}</p>
+  <button mat-flat-button color="primary" (click)="loadStats()">Réessayer</button>
+</div>
+
+<!-- Main content -->
+<ng-container *ngIf="stats && !loading">
+
+  <!-- KPI Cards -->
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon-wrapper" style="background-color: rgba(99, 102, 241, 0.15);">
+          <lucide-icon [img]="usersIcon" style="color: #6366f1;"></lucide-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Total Personnel</span>
+          <span class="stat-value">{{ stats.totalPersonnel }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon-wrapper" style="background-color: rgba(34, 197, 94, 0.15);">
+          <lucide-icon [img]="presentIcon" style="color: #22c55e;"></lucide-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Présents Aujourd'hui</span>
+          <span class="stat-value">{{ stats.totalPresent }}</span>
+          <span class="stat-badge good" *ngIf="presenceRate > 0">{{ presenceRate }}%</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon-wrapper" style="background-color: rgba(239, 68, 68, 0.15);">
+          <lucide-icon [img]="absentIcon" style="color: #ef4444;"></lucide-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Absents</span>
+          <span class="stat-value">{{ stats.totalAbsent }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon-wrapper" style="background-color: rgba(245, 158, 11, 0.15);">
+          <lucide-icon [img]="clockIcon" style="color: #f59e0b;"></lucide-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Retards</span>
+          <span class="stat-value">{{ stats.lateCount }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon-wrapper" style="background-color: rgba(142, 110, 224, 0.15);">
+          <lucide-icon [img]="trendIcon" style="color: #8e6ee0;"></lucide-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Heures Travaillées</span>
+          <span class="stat-value">{{ stats.totalWorkedHours }}h</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Bottom Grid: Activity + Late List -->
+  <div class="dashboard-content">
+
+    <!-- Recent Activity -->
+    <mat-card class="main-card">
+      <mat-card-header>
+        <mat-card-title>
+          <lucide-icon [img]="activityIcon" class="header-icon"></lucide-icon>
+          Activité Récente
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="stats.recentActivity.length === 0" class="placeholder-content">
+          <p>Aucun pointage aujourd'hui</p>
+        </div>
+        <div class="activity-list" *ngIf="stats.recentActivity.length > 0">
+          <div class="activity-item" *ngFor="let item of stats.recentActivity">
+            <div class="activity-type-badge" [class.type-in]="item.type === 'IN'" [class.type-out]="item.type === 'OUT'">
+              {{ item.type }}
+            </div>
+            <div class="activity-details">
+              <span class="activity-name">{{ item.name }}</span>
+              <span class="activity-meta">{{ item.time }} · {{ item.method }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Late Arrivals -->
+    <mat-card class="main-card" *ngIf="stats.lateList.length > 0">
+      <mat-card-header>
+        <mat-card-title>
+          <lucide-icon [img]="clockIcon" class="header-icon warn"></lucide-icon>
+          Retards du Jour
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="late-list">
+          <div class="late-item" *ngFor="let item of stats.lateList">
+            <div class="late-info">
+              <span class="late-name">{{ item.name }}</span>
+              <span class="late-times">Prévu {{ item.scheduledTime }} → Arrivé {{ item.actualTime }}</span>
+            </div>
+            <span class="late-delay">+{{ item.delayMinutes }} min</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</ng-container>

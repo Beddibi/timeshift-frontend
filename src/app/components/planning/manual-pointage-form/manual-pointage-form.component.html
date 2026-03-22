@@ -1,0 +1,114 @@
+<div class="pointage-panel">
+
+  <!-- Premium Header -->
+  <div class="panel-header">
+    <div class="header-glow"></div>
+    <div class="header-content">
+      <div class="header-icon-badge">
+        <lucide-icon [img]="clockIcon"></lucide-icon>
+      </div>
+      <div class="header-text">
+        <h2>{{ editData ? 'Modifier le Pointage' : 'Pointage Manuel' }}</h2>
+        <p class="header-sub">{{ editData ? 'Correction d\'un pointage existant' : 'Ajouter un pointage manuellement' }}</p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn" type="button">
+      <lucide-icon [img]="xIcon"></lucide-icon>
+    </button>
+  </div>
+
+  <!-- Form Body -->
+  <div class="panel-body">
+    <form [formGroup]="pointageForm" (ngSubmit)="onSubmit()" class="pointage-form">
+
+      <!-- Employé -->
+      <div [ngClass]="isFixedEmployee() ? 'compact-emp-wrapper' : 'field-card primary-card'">
+        <div class="field-label" *ngIf="!isFixedEmployee()">
+          <lucide-icon [img]="userIcon" class="label-icon"></lucide-icon>
+          <span>Employé Concerné</span>
+        </div>
+
+        <!-- Mode: Fixé (Modification) : Design ultra-minimal -->
+        <div class="emp-premium-badge" *ngIf="isFixedEmployee() && getSelectedPersonnel() as sel; else showDropdown">
+          <div class="emp-avatar-wrapper">
+             <div class="emp-avatar">{{ sel.firstName.charAt(0) }}{{ sel.lastName.charAt(0) }}</div>
+          </div>
+          <div class="emp-info">
+            <span class="emp-full-name">{{ sel.firstName }} {{ sel.lastName }}</span>
+            <span class="emp-position">Pointage {{ editData ? 'existant' : 'manuel' }}</span>
+          </div>
+          <div class="lock-indicator" *ngIf="editData">
+            <lucide-icon [name]="checkIcon" class="lock-icon"></lucide-icon>
+          </div>
+        </div>
+
+        <!-- Mode: sélection libre -->
+        <ng-template #showDropdown>
+          <mat-form-field appearance="outline" class="pf-field">
+            <mat-select formControlName="employeeId" placeholder="Sélectionner un employé..." panelClass="premium-dark-select-panel">
+              <mat-select-trigger>
+                {{ getSelectedPersonnelName() }}
+              </mat-select-trigger>
+              <mat-option *ngFor="let p of personnelList" [value]="p._id" class="employee-option">
+                <div class="emp-opt-content">
+                  <span class="emp-opt-name">{{ p.firstName }} {{ p.lastName }}</span>
+                  <span class="emp-opt-role">{{ p.position }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-error>L'employé est requis</mat-error>
+          </mat-form-field>
+        </ng-template>
+      </div>
+
+      <!-- Date & Heure et Type condensés dans un espace super premium -->
+      <div class="minimal-fields-container">
+        
+        <div class="compact-date-time">
+          <mat-form-field appearance="outline" class="pf-field minimal-input">
+            <input matInput type="date" formControlName="date" title="Date">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="pf-field minimal-input">
+            <input matInput type="time" formControlName="time" title="Heure">
+          </mat-form-field>
+        </div>
+
+        <!-- Type de Pointage -->
+        <div class="type-pills minimal-pills">
+          <button type="button"
+            class="pill pill-in"
+            [class.active]="pointageForm.get('type')?.value === 'IN'"
+            (click)="pointageForm.patchValue({type: 'IN'})">
+            <span>Arrivée (IN)</span>
+          </button>
+          <button type="button"
+            class="pill pill-out"
+            [class.active]="pointageForm.get('type')?.value === 'OUT'"
+            (click)="pointageForm.patchValue({type: 'OUT'})">
+            <span>Sortie (OUT)</span>
+          </button>
+        </div>
+        
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Actions Footer -->
+  <div class="panel-footer">
+    <button mat-button type="button" *ngIf="editData && editData._id" [disabled]="isLoading" (click)="deletePointage()" class="footer-btn btn-delete">
+      <lucide-icon [img]="xIcon"></lucide-icon>
+      Supprimer
+    </button>
+    <div class="footer-actions-right">
+      <button mat-button type="button" (click)="close()" class="footer-btn btn-cancel">Annuler</button>
+      <button mat-flat-button type="submit" [disabled]="pointageForm.invalid || isLoading" class="footer-btn btn-save" (click)="onSubmit()">
+        <span class="spinner" *ngIf="isLoading"></span>
+        <lucide-icon [img]="checkIcon" *ngIf="!isLoading"></lucide-icon>
+        {{ editData && editData._id ? 'Mettre à jour' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,341 @@
+<div class="header-section">
+  <div class="title-group">
+    <h1 class="page-title">Planning & Emploi du Temps</h1>
+    <p class="page-subtitle">Gérez les horaires de présence de votre équipe</p>
+  </div>
+  <div class="header-actions">
+    <button mat-button class="action-btn" (click)="exportToExcel()">
+      <lucide-icon [img]="exportIcon"></lucide-icon>
+      Exporter (Excel)
+    </button>
+    <button mat-flat-button color="primary" class="add-button" (click)="openSidebar()">
+      <lucide-icon [img]="calendarIcon"></lucide-icon>
+      Nouvelle Session
+    </button>
+  </div>
+</div>
+
+<mat-drawer-container class="planning-drawer-container">
+  <mat-drawer position="end" [opened]="isSidebarOpen" (closed)="closeSidebar()" class="shift-sidebar" mode="over">
+    <app-shift-form
+      *ngIf="sidebarMode === 'SHIFT'"
+      [editShiftData]="editingShift"
+      [initialPersonnelId]="selectedPersonnelToMap"
+      [initialDate]="selectedDateToMap"
+      (shiftSaved)="onShiftSaved($event)"
+      (formClosed)="closeSidebar()">
+    </app-shift-form>
+
+    <app-day-detail
+      *ngIf="sidebarMode === 'DAY_DETAIL'"
+      [date]="selectedDayDetail"
+      [personnelList]="personnelList"
+      [shifts]="shifts"
+      [attendances]="attendances"
+      (editAttendance)="editManualPointage($event)"
+      (addAttendance)="addManualPointage($event)"
+      (close)="closeSidebar()">
+    </app-day-detail>
+
+    <app-manual-pointage-form
+      *ngIf="sidebarMode === 'MANUAL_POINTAGE'"
+      [editData]="editingAttendance"
+      [initialDate]="selectedDayDetail"
+      [initialPersonnelId]="selectedPersonnelToMap"
+      (pointageSaved)="onShiftSaved($any($event))"
+      (formClosed)="closeSidebar()">
+    </app-manual-pointage-form>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <mat-card class="planning-card">
+  <div class="card-header" *ngIf="viewMode !== 'employee-month'">
+    <div class="calendar-controls">
+      <button mat-icon-button (click)="previousWeek()" class="nav-btn">
+        <lucide-icon [img]="chevronLeftIcon"></lucide-icon>
+      </button>
+      <h3 *ngIf="weekDays.length">Semaine du {{ weekDays[0] | date:'d MMMM yyyy':'':'fr' }}</h3>
+      <button mat-icon-button (click)="nextWeek()" class="nav-btn">
+        <lucide-icon [img]="chevronRightIcon"></lucide-icon>
+      </button>
+    </div>
+    <div class="search-field-container">
+      <div class="search-input-wrapper">
+        <lucide-icon [img]="searchIcon"></lucide-icon>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher un employé...">
+      </div>
+    </div>
+    <div class="view-toggles">
+      <button class="toggle-btn" [class.active]="viewMode === 'week'" (click)="setViewMode('week')">Semaine</button>
+      <button class="toggle-btn" [class.active]="viewMode === 'month'" (click)="setViewMode('month')">Mois</button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="false">
+    <div class="placeholder-content">
+      <div class="icon-wrapper">
+        <lucide-icon [img]="clockIcon"></lucide-icon>
+      </div>
+      <h2>Le planning est prêt à être configuré</h2>
+      <p>Cette section vous permettra de glisser-déposer les horaires de vos employés de manière interactive. L'interface de base est en place !</p>
+    </div>
+  </ng-container>
+
+  <div class="calendar-wrapper" *ngIf="viewMode === 'week'">
+    <table class="calendar-grid">
+      <thead>
+        <tr>
+          <th class="personnel-col">Employés</th>
+          <th *ngFor="let day of weekDays" class="day-col clickable-header" (click)="openDayDetail(day)" title="Voir le détail de la journée">
+            <div class="day-name">{{ day | date:'EEEE' : 'fr' }}</div>
+            <div class="day-date">{{ day | date:'dd MMM' : 'fr' }}</div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let person of filteredPersonnelList">
+          <td class="personnel-cell">
+            <div class="user-info">
+              <div class="user-avatar">{{ person.firstName.charAt(0) }}{{ person.lastName.charAt(0) }}</div>
+              <div class="user-details">
+                <div class="user-name">
+                  {{ person.firstName }} {{ person.lastName }}
+                </div>
+                <div class="user-role">{{ person.position }}</div>
+              </div>
+            </div>
+          </td>
+          <td *ngFor="let day of weekDays" class="shift-cell">
+            <div class="shift-wrapper">
+              <div *ngFor="let shift of getShiftsForPersonnelAndDay(person._id!, day)" 
+                   class="shift-block" 
+                   [ngClass]="'type-' + shift.type.toLowerCase()">
+                <div class="shift-time">{{ shift.startTime }} - {{ shift.endTime }}</div>
+                <div class="shift-type" *ngIf="shift.type !== 'NORMAL'">
+                  {{ shift.type === 'OVERTIME' ? 'Heures Sup.' : 
+                     shift.type === 'LEAVE' ? 'Congé' :
+                     shift.type === 'SICK' ? 'Maladie' :
+                     shift.type === 'ABSENT' ? 'Absent' :
+                     shift.type === 'HOLIDAY' ? 'Jour Férié' : shift.type }}
+                </div>
+                <!-- Actions de management de session -->
+                <div class="shift-actions">
+                  <button class="icon-btn edit-btn" (click)="editShift(shift)" title="Modifier">
+                    <lucide-icon [img]="editIcon"></lucide-icon>
+                  </button>
+                  <button class="icon-btn delete-btn" (click)="deleteShift(shift)" title="Supprimer">
+                    <lucide-icon [img]="trashIcon"></lucide-icon>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Actual Attendances Logs (Pointages) -->
+              <div class="attendances-container" *ngIf="getAttendancesForPersonnelAndDay(person._id!, day).length > 0">
+                <div *ngFor="let att of getAttendancesForPersonnelAndDay(person._id!, day)" 
+                     class="attendance-block clickable-pointage" 
+                     [ngClass]="att.type === 'IN' ? 'att-in' : 'att-out'"
+                     (click)="editManualPointage(att); $event.stopPropagation();"
+                     title="Modifier ce pointage">
+                  <div class="att-dot"></div>
+                  <span class="att-time">{{ att.punchTime | date:'HH:mm' }}</span>
+                  <lucide-icon [img]="smartphoneIcon" *ngIf="att.method === 'WEB_MOBILE'" title="Pointage Mobile" class="mobile-punch-icon"></lucide-icon>
+                  <span class="att-type">{{ att.type === 'IN' ? 'ARR' : 'DÉP' }}</span>
+                </div>
+              </div>
+
+              <!-- Bouton d'ajout inline dynamique -->
+              <div class="inline-add-btn" (click)="openSidebar(person._id!, day)" title="Ajouter au planning">
+                <lucide-icon [img]="plusIcon"></lucide-icon>
+                <span>Ajouter</span>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Vue "Mois" : Sélection de l'employé -->
+  <div class="month-selection-wrapper" *ngIf="viewMode === 'month'">
+    <div class="month-selection-header">
+      <div class="left-section">
+        <div class="icon-wrapper">
+          <lucide-icon [img]="calendarIcon"></lucide-icon>
+        </div>
+        <div class="title-group">
+          <h2>Planning Mensuel Global</h2>
+          <p>Sélectionnez un employé pour les détails, ou générez un rapport RH consolidé.</p>
+        </div>
+      </div>
+      <div class="right-section">
+        <button mat-flat-button class="global-export-btn action-premium" (click)="downloadGlobalMonthPDF()" [disabled]="isGeneratingGlobalPDF">
+          <lucide-icon [img]="isGeneratingGlobalPDF ? clockIcon : exportIcon" [class.spin]="isGeneratingGlobalPDF"></lucide-icon>
+          {{ isGeneratingGlobalPDF ? 'Génération...' : 'Télécharger Rapport Global PDF' }}
+        </button>
+      </div>
+    </div>
+    
+    <div class="employee-cards-grid">
+      <div class="employee-card" *ngFor="let person of filteredPersonnelList" (click)="openMonthView(person)">
+        <div class="card-avatar">{{ person.firstName.charAt(0) }}{{ person.lastName.charAt(0) }}</div>
+        <div class="card-info">
+          <h4>{{ person.firstName }} {{ person.lastName }}</h4>
+          <span>{{ person.position }}</span>
+        </div>
+        <lucide-icon [img]="chevronRightIcon" class="nav-icon"></lucide-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: EMPLOYEE PREMUIM MONTH VIEW WITH EXPORT PDF -->
+  <div class="employee-month-wrapper" *ngIf="viewMode === 'employee-month'">
+    <div class="employee-month-header">
+      <div class="header-left">
+        <button mat-button class="back-btn" (click)="setViewMode('month')">
+          <lucide-icon [img]="chevronLeftIcon"></lucide-icon>Retour
+        </button>
+      </div>
+      
+      <div class="header-center">
+        <button mat-icon-button class="nav-btn" (click)="prevEmployeeMonth()"><lucide-icon [img]="chevronLeftIcon"></lucide-icon></button>
+        <div class="center-titles">
+          <h2>{{ selectedPersonnelMonth?.firstName }} {{ selectedPersonnelMonth?.lastName }}</h2>
+          <h3 class="month-label">{{ monthViewDate | date:'MMMM yyyy':'':'fr' | titlecase }}</h3>
+        </div>
+        <button mat-icon-button class="nav-btn" (click)="nextEmployeeMonth()"><lucide-icon [img]="chevronRightIcon"></lucide-icon></button>
+      </div>
+
+      <div class="header-right">
+        <button mat-flat-button class="export-pdf-btn" (click)="downloadPDF()">
+          <lucide-icon [img]="exportIcon"></lucide-icon>Télécharger Rapport PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Container that gets exported to PDF -->
+    <div id="employee-month-export-container">
+       <div class="pdf-header">
+         <h2>Planning Personnel</h2>
+         <h3>{{ selectedPersonnelMonth?.firstName }} {{ selectedPersonnelMonth?.lastName }} - {{ selectedPersonnelMonth?.position }}</h3>
+         <p>{{ monthViewDate | date:'MMMM yyyy':'':'fr' | titlecase }}</p>
+       </div>
+
+       <div class="employee-kpi-cards">
+         <div class="kpi-card hours">
+           <div class="kpi-icon"><lucide-icon [img]="clockIcon"></lucide-icon></div>
+           <div class="kpi-data">
+             <span class="kpi-value">{{ monthKPIs.totalHours }}h</span>
+             <span class="kpi-label">Heures travaillées</span>
+           </div>
+         </div>
+         <div class="kpi-card days">
+           <div class="kpi-icon"><lucide-icon [img]="calendarIcon"></lucide-icon></div>
+           <div class="kpi-data">
+             <span class="kpi-value">{{ monthKPIs.workedDays }}</span>
+             <span class="kpi-label">Jours de présence</span>
+           </div>
+         </div>
+         <div class="kpi-card absences">
+           <div class="kpi-icon"><lucide-icon [img]="trashIcon"></lucide-icon></div>
+           <div class="kpi-data">
+             <span class="kpi-value">{{ monthKPIs.absences }}</span>
+             <span class="kpi-label">Absences / Maladies</span>
+           </div>
+         </div>
+         <div class="kpi-card late">
+           <div class="kpi-icon"><lucide-icon [img]="clockIcon"></lucide-icon></div>
+           <div class="kpi-data">
+             <span class="kpi-value">{{ monthKPIs.lateArrivals }}</span>
+             <span class="kpi-label">Retards constatés</span>
+           </div>
+         </div>
+       </div>
+
+       <div class="month-calendar-grid">
+         <!-- Days of week header -->
+         <div class="grid-header">
+           <div class="day-name">Lun</div>
+           <div class="day-name">Mar</div>
+           <div class="day-name">Mer</div>
+           <div class="day-name">Jeu</div>
+           <div class="day-name">Ven</div>
+           <div class="day-name">Sam</div>
+           <div class="day-name">Dim</div>
+         </div>
+   
+         <!-- Calendar Body -->
+         <div class="grid-body">
+           <div class="day-cell" *ngFor="let day of monthCalendarDays" [ngClass]="{'not-current-month': !day.isCurrentMonth}">
+             <div class="date-number">{{ day.date | date:'d' }}</div>
+             
+             <div class="shifts-container">
+               <div *ngFor="let shift of day.shifts" 
+                    class="shift-badge"
+                    [ngClass]="'type-' + shift.type.toLowerCase()">
+                 <span class="shift-time">{{ shift.startTime }} - {{ shift.endTime }}</span>
+                 <span class="shift-type" *ngIf="shift.type !== 'NORMAL'">
+                   {{ shift.type === 'OVERTIME' ? 'HS' : 
+                      shift.type === 'LEAVE' ? 'CG' :
+                      shift.type === 'SICK' ? 'MAL' :
+                      shift.type === 'ABSENT' ? 'ABS' :
+                      shift.type === 'HOLIDAY' ? 'FER' : shift.type }}
+                 </span>
+               </div>
+             </div>
+
+              <!-- Month View Attendances -->
+              <div class="attendances-month-container">
+                <div *ngFor="let att of day.attendances" class="att-month-badge" [ngClass]="att.type === 'IN' ? 'in' : 'out'">
+                  <span class="att-time">{{ att.punchTime | date:'HH:mm' }}</span>
+                  <span class="att-type">{{ att.type === 'IN' ? 'ARR' : 'DÉP' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+       </div>
+    </div>
+  </div>
+
+  <!-- GLOBAL HR EXPORT CONTAINER (Hidden off-screen) -->
+  <div id="global-month-export-container" class="pdf-export-container" [class.invisible]="!isGeneratingGlobalPDF">
+    <div class="pdf-header global-pdf">
+      <div class="pdf-title-block">
+        <h2>Rapport Mensuel Global des Présences (RH)</h2>
+        <h3>Mois: {{ weekDays.length ? (weekDays[0] | date:'MMMM yyyy':'':'fr' | titlecase) : '' }}</h3>
+      </div>
+    </div>
+    
+    <table class="global-report-table">
+      <thead>
+        <tr>
+          <th>Employé</th>
+          <th>Poste</th>
+          <th>Jours Présents</th>
+          <th>Heures Travaillées</th>
+          <th>Retards</th>
+          <th>Absences/Congés</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of globalMonthReportData">
+          <td><strong>{{ row.employee.firstName }} {{ row.employee.lastName }}</strong></td>
+          <td>{{ row.employee.position }}</td>
+          <td class="text-center">{{ row.kpis.workedDays }}</td>
+          <td class="text-center">{{ row.kpis.totalHours | number:'1.0-1' }}h</td>
+          <td class="text-center" [ngClass]="{'has-lates': row.kpis.lateArrivals > 0}">{{ row.kpis.lateArrivals }}</td>
+          <td class="text-center" [ngClass]="{'has-absences': row.kpis.absences > 0}">{{ row.kpis.absences }}</td>
+        </tr>
+        <tr *ngIf="globalMonthReportData.length === 0">
+          <td colspan="6" class="text-center empty-state">Génération des données en cours...</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="pdf-footer">
+      <p>Généré automatiquement par le système TimeShift le {{ currentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+    </div>
+  </div>
+
+</mat-card>
+  </mat-drawer-content>
+</mat-drawer-container>

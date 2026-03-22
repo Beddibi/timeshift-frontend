@@ -1,0 +1,71 @@
+<div class="user-settings-layout">
+  <div class="header-section">
+    <div class="title-area">
+      <div class="icon-wrapper">
+        <lucide-icon [name]="shieldIcon"></lucide-icon>
+      </div>
+      <div>
+        <h1>Accès & Rôles</h1>
+        <p>Gérez les administrateurs et leurs permissions détaillées.</p>
+      </div>
+    </div>
+    <div class="actions-area">
+      <button mat-flat-button color="primary" class="add-btn" (click)="openUserForm()">
+        <lucide-icon [name]="plusIcon" class="btn-icon"></lucide-icon>
+        <span>Ajouter un compte</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="users-list-card">
+      <div class="loading-overlay" *ngIf="isLoading">
+        <div class="spinner"></div>
+      </div>
+      
+      <div class="empty-state" *ngIf="!isLoading && users.length === 0">
+        <lucide-icon [name]="usersIcon"></lucide-icon>
+        <h3>Aucun utilisateur enregistré</h3>
+        <p>Commencez par ajouter un administrateur système.</p>
+      </div>
+
+      <div class="users-grid" *ngIf="users.length > 0">
+        <div class="user-card" *ngFor="let user of users" [class.is-superadmin]="user.permissions?.includes('*')">
+          <div class="card-header">
+            <div class="avatar-circle">
+              {{ (user.firstName || user.username).charAt(0).toUpperCase() }}
+            </div>
+            <div class="user-info">
+              <h4>{{ user.firstName }} {{ user.lastName }}</h4>
+              <span class="username">&#64;{{ user.username }}</span>
+            </div>
+            <div class="badge-role" *ngIf="user.permissions?.includes('*')">
+              <lucide-icon [name]="checkIcon" class="badge-icon"></lucide-icon>
+              Super Admin
+            </div>
+          </div>
+          <div class="card-permissions">
+            <div class="perm-title">Permissions accordées :</div>
+            <div class="perm-chips" *ngIf="!user.permissions?.includes('*')">
+              <span class="chip" *ngFor="let perm of user.permissions">
+                {{ perm.replace('VIEW_', 'Lecture ').replace('MANAGE_', 'Gestion ') }}
+              </span>
+              <span class="chip empty" *ngIf="user.permissions?.length === 0">Aucune permission</span>
+            </div>
+            <div class="perm-chips" *ngIf="user.permissions?.includes('*')">
+              <span class="chip all">All Access</span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button mat-icon-button class="action-btn edit" (click)="openUserForm(user)">
+              <lucide-icon [name]="editIcon"></lucide-icon>
+            </button>
+            <button mat-icon-button class="action-btn delete" *ngIf="!user.permissions?.includes('*')" (click)="deleteUser(user)">
+              <lucide-icon [name]="deleteIcon"></lucide-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

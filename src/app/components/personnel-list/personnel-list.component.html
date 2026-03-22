@@ -1,0 +1,113 @@
+<div class="header-section">
+  <div class="title-group">
+    <h1 class="page-title">Gestion du Personnel</h1>
+    <p class="page-subtitle">Consultez et gérez les dossiers de vos employés</p>
+  </div>
+  <button mat-flat-button color="primary" class="add-button" (click)="openAddPersonnelDialog()">
+    Ajouter un Employé
+  </button>
+</div>
+
+<mat-card class="table-card">
+  <div class="card-header">
+    <div class="filters-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <input matInput (input)="onSearchChange($event)" placeholder="Rechercher par matricule, nom, département...">
+        <lucide-icon [name]="searchIcon" matPrefix></lucide-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="status-filter-field">
+        <mat-select [(ngModel)]="statusFilter" (selectionChange)="onFilterChange()">
+          <mat-option value="ALL">Tous les statuts</mat-option>
+          <mat-option value="ACTIVE">Actifs</mat-option>
+          <mat-option value="INACTIVE">Inactifs</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <table mat-table [dataSource]="filteredDataSource" class="personnel-table">
+    <!-- Colonne Matricule -->
+    <ng-container matColumnDef="matricule">
+      <th mat-header-cell *matHeaderCellDef>Matricule</th>
+      <td mat-cell *matCellDef="let element">
+        <div style="font-weight: bold; color: #8e6ee0; font-family: 'Outfit', sans-serif;">{{ element.matricule || 'N/A' }}</div>
+      </td>
+    </ng-container>
+
+    <!-- Colonne Nom -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Employé</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="user-cell">
+          <div class="user-avatar">{{ element.firstName.charAt(0) }}{{ element.lastName.charAt(0) }}</div>
+          <div class="user-details">
+            <span class="user-name">{{ element.firstName }} {{ element.lastName }}</span>
+            <span class="user-email">
+              {{ element.email }}
+            </span>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <!-- Colonne Poste -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef>Poste</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="position-cell">
+          {{ element.position }}
+        </div>
+      </td>
+    </ng-container>
+
+    <!-- Colonne Département -->
+    <ng-container matColumnDef="department">
+      <th mat-header-cell *matHeaderCellDef>Département</th>
+      <td mat-cell *matCellDef="let element">{{ element.department }}</td>
+    </ng-container>
+
+    <!-- Colonne Statut -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-chip-set>
+          <mat-chip [class.status-active]="element.isActive" [class.status-inactive]="!element.isActive">
+            {{ element.isActive ? 'Actif' : 'Inactif' }}
+          </mat-chip>
+        </mat-chip-set>
+      </td>
+    </ng-container>
+
+    <!-- Colonne Actions -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="action-buttons">
+          <button mat-icon-button class="toggle-btn" 
+                  [ngClass]="element.isActive ? 'active-toggle' : 'inactive-toggle'"
+                  (click)="toggleActive(element)" 
+                  [title]="element.isActive ? 'Désactiver' : 'Activer'">
+            <lucide-icon [name]="powerIcon"></lucide-icon>
+          </button>
+          <button mat-icon-button class="edit-btn" (click)="editPersonnel(element)" title="Modifier">
+            <lucide-icon [name]="editIcon"></lucide-icon>
+          </button>
+          <button mat-icon-button class="delete-btn" (click)="deletePersonnel(element._id)" title="Supprimer">
+            <lucide-icon [name]="deleteIcon"></lucide-icon>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    
+    <!-- Ligne de chargement ou vide -->
+    <tr class="mat-row empty-row" *matNoDataRow>
+      <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+        {{ loading ? 'Chargement des données...' : 'Aucun employé trouvé.' }}
+      </td>
+    </tr>
+  </table>
+</mat-card>

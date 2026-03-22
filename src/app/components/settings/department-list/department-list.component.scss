@@ -1,0 +1,197 @@
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+
+  .title-group {
+    .page-title {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      color: var(--text-heading);
+      margin: 0 0 8px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin: 0;
+    }
+  }
+}
+
+.table-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  background-color: var(--bg-surface);
+  overflow: hidden;
+
+  .card-header {
+    padding: 24px 32px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+
+    .add-field {
+      width: 100%;
+      max-width: 380px;
+
+      ::ng-deep .mat-mdc-text-field-wrapper {
+        background-color: var(--bg-base) !important;
+        border-radius: var(--radius-sm);
+        height: 48px;
+      }
+      ::ng-deep .mat-mdc-form-field-flex {
+        height: 48px;
+        align-items: center;
+      }
+      ::ng-deep .mat-mdc-form-field-outline { color: transparent !important; }
+      ::ng-deep input.mat-mdc-input-element {
+        color: var(--text-heading) !important;
+        font-size: 14px;
+        height: 100%;
+      }
+    }
+
+    .add-button {
+      height: 48px;
+      padding: 0 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
+      lucide-icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+.personnel-table {
+  width: 100%;
+  background-color: transparent;
+  color: var(--text-body);
+  table-layout: fixed;
+  
+  ::ng-deep th.mat-mdc-header-cell {
+    background: var(--bg-surface) !important;
+    color: var(--text-muted) !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    padding: 24px 32px !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+
+    &.mat-column-name { width: 50%; }
+    &.mat-column-status { width: 30%; }
+    &.mat-column-actions { width: 20%; text-align: right; }
+  }
+
+  ::ng-deep td.mat-mdc-cell {
+    padding: 24px 32px !important;
+    color: var(--text-body) !important;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    transition: background-color 0.2s ease;
+
+    &.mat-column-actions { text-align: right; }
+  }
+
+  tr:last-child ::ng-deep td.mat-mdc-cell {
+    border-bottom: none !important;
+  }
+
+  tr:hover {
+    ::ng-deep td.mat-mdc-cell {
+      background-color: var(--bg-elevated) !important;
+    }
+  }
+}
+
+.dept-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  lucide-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted) !important;
+  }
+
+  .dept-name {
+    color: var(--text-heading) !important;
+    font-weight: 500;
+    font-size: 15px;
+  }
+}
+
+::ng-deep .mat-mdc-chip {
+  &.status-active, &.status-inactive {
+    .mdc-evolution-chip__action {
+      padding: 0 12px !important;
+    }
+    .mdc-evolution-chip__text-label {
+      font-weight: 500;
+      font-size: 12px;
+    }
+  }
+  &.status-active {
+    background-color: rgba(45, 106, 79, 0.15) !important;
+    border: 1px solid rgba(126, 205, 198, 0.3) !important;
+    .mdc-evolution-chip__text-label { color: var(--color-success-text) !important; }
+  }
+  &.status-inactive {
+    background-color: rgba(26, 20, 50, 0.5) !important;
+    border: 1px solid var(--border-subtle) !important;
+    .mdc-evolution-chip__text-label { color: var(--text-muted) !important; }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+
+  button {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    transition: all 0.2s ease;
+    
+    lucide-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    &.delete-btn {
+      color: var(--text-muted) !important;
+      &:hover { 
+        color: var(--text-heading) !important;
+        border-color: var(--color-error-bg);
+        background-color: var(--color-error-bg); 
+        box-shadow: 0 4px 12px rgba(207, 102, 121, 0.25);
+      }
+    }
+  }
+}
+
+.empty-row td {
+  text-align: center;
+  padding: 40px !important;
+  color: var(--text-muted) !important;
+  font-style: italic;
+  border-bottom: none !important;
+}
