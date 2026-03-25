@@ -731,7 +731,7 @@ export class PlanningComponent implements OnInit {
       ${kpiHtml}
       ${calendarHtml}
       <div style="margin-top: 30px; text-align: center; color: #4a455a; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">
-        Document confidentiel - TimeShift RH
+        Document confidentiel - ShiftCore RH
       </div>
     `;
 

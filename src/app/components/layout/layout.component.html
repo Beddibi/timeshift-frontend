@@ -1,59 +1,46 @@
 <mat-sidenav-container class="layout-container">
   <mat-sidenav mode="side" opened class="sidenav">
     <div class="logo-container">
-      <span class="logo-text">Time<span>Shift</span></span>
+      <span class="logo-text">Shift<span>Core</span></span>
     </div>
     
     <nav class="nav-list">
-      
-      <div class="nav-group">
-        <span class="nav-group-title">Général</span>
-        <a class="nav-item" routerLink="/dashboard" routerLinkActive="active-link">
-          <lucide-icon [name]="dashboardIcon" class="nav-icon"></lucide-icon>
-          <span class="nav-text">Tableau de Bord</span>
-        </a>
-      </div>
-
-      <div class="nav-group" *ngIf="authService.hasPermission('VIEW_PERSONNEL') || authService.hasPermission('VIEW_DEPARTMENTS') || authService.hasPermission('VIEW_PLANNING') || authService.hasPermission('VIEW_LEAVES')">
-        <span class="nav-group-title">Ressources Humaines</span>
-        <a class="nav-item" routerLink="/personnel" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_PERSONNEL') || authService.hasPermission('MANAGE_PERSONNEL')">
-          <lucide-icon [name]="usersIcon" class="nav-icon"></lucide-icon>
-          <span class="nav-text">Personnel</span>
-        </a>
-        <a class="nav-item" routerLink="/departments" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_DEPARTMENTS') || authService.hasPermission('MANAGE_DEPARTMENTS')">
-          <lucide-icon [name]="buildingIcon" class="nav-icon"></lucide-icon>
-          <span class="nav-text">Départements</span>
-        </a>
-        <a class="nav-item" routerLink="/planning" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_PLANNING') || authService.hasPermission('MANAGE_PLANNING')">
-          <lucide-icon [name]="calendarIcon" class="nav-icon"></lucide-icon>
-          <span class="nav-text">Planning</span>
-        </a>
-        <a class="nav-item" routerLink="/leaves" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_LEAVES') || authService.hasPermission('MANAGE_LEAVES')">
-          <lucide-icon [name]="leaveIcon" class="nav-icon"></lucide-icon>
-          <span class="nav-text">Congés</span>
-        </a>
-      </div>
-
-      <div class="nav-group" *ngIf="authService.hasPermission('VIEW_REPORTS') || authService.hasPermission('MANAGE_SETTINGS') || authService.hasPermission('MANAGE_USERS')">
-        <span class="nav-group-title">Système & Outils</span>
-        <a class="nav-item" routerLink="/reports" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_REPORTS')">
-          <lucide-icon [name]="reportsIcon" class="nav-icon"></lucide-icon>
-          <span class="nav-text">Rapports d'Activité</span>
-        </a>
-        <a class="nav-item" routerLink="/settings/company" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_SETTINGS')">
-          <lucide-icon [name]="settingsIcon" class="nav-icon"></lucide-icon>
-          <span class="nav-text">Paramètres</span>
-        </a>
-        <a class="nav-item" routerLink="/settings/users" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_USERS')">
-          <lucide-icon [name]="shieldIcon" class="nav-icon"></lucide-icon>
-          <span class="nav-text">Accès & Rôles</span>
-        </a>
-        <a class="nav-item" routerLink="/settings/devices" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_DEVICES') || authService.hasPermission('MANAGE_SETTINGS')">
-          <lucide-icon [name]="devicesIcon" class="nav-icon"></lucide-icon>
-          <span class="nav-text">Pointeuses / Kiosque</span>
-        </a>
-      </div>
-
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active-link">
+        <lucide-icon [name]="dashboardIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Tableau de Bord</span>
+      </a>
+      <a class="nav-item" routerLink="/personnel" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_PERSONNEL') || authService.hasPermission('MANAGE_PERSONNEL')">
+        <lucide-icon [name]="usersIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Personnel</span>
+      </a>
+      <a class="nav-item" routerLink="/departments" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_DEPARTMENTS') || authService.hasPermission('MANAGE_DEPARTMENTS')">
+        <lucide-icon [name]="buildingIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Départements</span>
+      </a>
+      <a class="nav-item" routerLink="/planning" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_PLANNING') || authService.hasPermission('MANAGE_PLANNING')">
+        <lucide-icon [name]="calendarIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Planning</span>
+      </a>
+      <a class="nav-item" routerLink="/leaves" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_LEAVES') || authService.hasPermission('MANAGE_LEAVES')">
+        <lucide-icon [name]="leaveIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Congés</span>
+      </a>
+      <a class="nav-item" routerLink="/reports" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_REPORTS')">
+        <lucide-icon [name]="reportsIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Rapports d'Activité</span>
+      </a>
+      <a class="nav-item" routerLink="/settings/company" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_SETTINGS')">
+        <lucide-icon [name]="settingsIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Paramètres</span>
+      </a>
+      <a class="nav-item" routerLink="/settings/users" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_USERS')">
+        <lucide-icon [name]="shieldIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Accès & Rôles</span>
+      </a>
+      <a class="nav-item" routerLink="/settings/devices" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_DEVICES') || authService.hasPermission('MANAGE_SETTINGS')">
+        <lucide-icon [name]="devicesIcon" class="nav-icon"></lucide-icon>
+        <span class="nav-text">Pointeuses / Kiosque</span>
+      </a>
     </nav>
 
     <div class="sidenav-footer">

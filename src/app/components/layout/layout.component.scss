@@ -37,21 +37,6 @@
     gap: 4px;
     overflow: hidden;
 
-    .nav-group {
-      margin-bottom: 12px;
-
-      .nav-group-title {
-        display: block;
-        font-size: 11px;
-        color: rgba(255,255,255,0.3);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        font-weight: 700;
-        margin: 0 0 6px 16px;
-        font-family: 'Inter', sans-serif;
-      }
-    }
-
     .nav-item {
       text-decoration: none;
       display: flex;
