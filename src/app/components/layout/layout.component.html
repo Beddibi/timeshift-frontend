@@ -52,6 +52,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content class="main-layout">
+    <mat-progress-bar mode="indeterminate" color="primary" class="global-loader" *ngIf="loadingService.loading$ | async"></mat-progress-bar>
     <header class="top-header">
       <div class="search-bar">
         <lucide-icon [name]="searchIcon" class="search-icon"></lucide-icon>

@@ -13,7 +13,8 @@
     <div class="action-section">
       <button mat-button class="btn-cancel" (click)="onCancel()" type="button">Annuler</button>
       <button mat-flat-button color="primary" class="btn-submit" [disabled]="personnelForm.invalid || loading" (click)="onSubmit()" type="button">
-        {{ isEditMode ? 'Enregistrer' : 'Créer l\'employé' }}
+        <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+        <span *ngIf="!loading">{{ isEditMode ? 'Enregistrer' : 'Créer l\'employé' }}</span>
       </button>
     </div>
   </div>

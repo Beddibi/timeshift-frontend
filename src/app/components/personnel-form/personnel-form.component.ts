@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LucideAngularModule, ArrowLeft, User, Briefcase, Fingerprint, KeyRound, Smartphone } from 'lucide-angular';
 import { PersonnelService } from '../../services/personnel.service';
 import { DepartmentService, Department } from '../../services/department.service';
@@ -21,6 +22,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
     LucideAngularModule
   ],
   templateUrl: './personnel-form.component.html',
@@ -115,11 +117,15 @@ export class PersonnelFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.personnelForm.valid) {
+      this.loading = true;
       if (this.isEditMode && this.currentId) {
         // Editing mode
         this.personnelService.updatePersonnel(this.currentId, this.personnelForm.value).subscribe({
           next: () => this.router.navigate(['/personnel']),
-          error: (error) => console.error('Error updating personnel:', error)
+          error: (error) => {
+            console.error('Error updating personnel:', error);
+            this.loading = false;
+          }
         });
       } else {
         // Creation mode
@@ -130,7 +136,10 @@ export class PersonnelFormComponent implements OnInit {
         
         this.personnelService.createPersonnel(newPersonnel).subscribe({
           next: () => this.router.navigate(['/personnel']),
-          error: (error) => console.error('Error creating personnel:', error)
+          error: (error) => {
+            console.error('Error creating personnel:', error);
+            this.loading = false;
+          }
         });
       }
     }
