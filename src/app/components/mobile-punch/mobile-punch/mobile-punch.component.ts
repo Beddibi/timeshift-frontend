@@ -166,14 +166,26 @@ export class MobilePunchComponent implements OnInit, OnDestroy {
   private getCurrentPosition(): Promise<any> {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
-        reject(new Error('La géolocalisation n\'est pas supportée par votre navigateur.'));
+        reject(new Error("La géolocalisation n'est pas supportée par votre navigateur."));
       } else {
-        navigator.geolocation.getCurrentPosition(resolve, () => {
-          reject(new Error('Veuillez autoriser la géolocalisation pour pointer.'));
+        navigator.geolocation.getCurrentPosition(resolve, (error) => {
+          let msg = "Erreur de géolocalisation.";
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              msg = "Veuillez autoriser la géolocalisation dans les réglages du téléphone pour pouvoir pointer.";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              msg = "Position indisponible. Vérifiez que votre GPS est bien activé.";
+              break;
+            case error.TIMEOUT:
+              msg = "Le délai d'attente pour obtenir votre position a expiré. Réessayez.";
+              break;
+          }
+          reject(new Error(msg));
         }, {
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
+          timeout: 15000,
+          maximumAge: 60000 // Accept a cached position from up to 1 minute ago
         });
       }
     });

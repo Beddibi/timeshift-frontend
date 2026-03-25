@@ -1,0 +1,21 @@
+{
+  "name": "ShiftCore HR",
+  "short_name": "ShiftCore",
+  "theme_color": "#673ab7",
+  "background_color": "#0f0a18",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/mobile",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
