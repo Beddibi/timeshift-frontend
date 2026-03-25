@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:3000' // To be updated with production server URL
+  apiUrl: 'https://timeshift-backend-prod.onrender.com' // To be updated with production server URL
 };
