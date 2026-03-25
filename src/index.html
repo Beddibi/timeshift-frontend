@@ -13,5 +13,12 @@
 </head>
 <body>
   <app-root></app-root>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(() => console.log('Service Worker Registered'))
+        .catch(err => console.error('Service Worker Registry Failed', err));
+    }
+  </script>
 </body>
 </html>
