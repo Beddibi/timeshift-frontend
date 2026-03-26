@@ -1,0 +1,77 @@
+<div class="dialog-header">
+  <h2 mat-dialog-title>{{ data.template ? 'Modifier' : 'Nouveau' }} Modèle d'Horaire</h2>
+  <button mat-icon-button class="close-btn" (click)="onCancel()">
+    <lucide-icon [name]="closeIcon"></lucide-icon>
+  </button>
+</div>
+
+<mat-dialog-content [formGroup]="templateForm" class="dialog-content">
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nom du modèle</mat-label>
+      <input matInput formControlName="name" placeholder="ex: Horaire Administratif">
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description (optionnel)</mat-label>
+      <textarea matInput formControlName="description" placeholder="Description courte du modèle..."></textarea>
+    </mat-form-field>
+  </div>
+
+  <div class="slots-section">
+    <div class="section-header">
+      <h3>Tranches Horaires par Jour</h3>
+      <button mat-stroked-button color="primary" type="button" (click)="addSlot()">
+        <lucide-icon [name]="plusIcon" class="btn-icon"></lucide-icon>
+        Ajouter un jour
+      </button>
+    </div>
+
+    <div formArrayName="slots" class="slots-container">
+      <div *ngFor="let slot of slots.controls; let i=index" [formGroupName]="i" class="slot-row">
+        <mat-form-field appearance="outline" class="day-select">
+          <mat-select formControlName="dayOfWeek">
+            <mat-option *ngFor="let day of daysOfWeek" [value]="day.value">
+              {{ day.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="time-inputs">
+          <mat-form-field appearance="outline">
+            <input matInput type="time" formControlName="startTime">
+          </mat-form-field>
+          <span class="to-separator">à</span>
+          <mat-form-field appearance="outline">
+            <input matInput type="time" formControlName="endTime">
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="type-select">
+          <mat-select formControlName="type">
+            <mat-option *ngFor="let type of shiftTypes" [value]="type.value">
+              {{ type.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-icon-button color="warn" (click)="removeSlot(i)" class="delete-btn">
+          <lucide-icon [name]="deleteIcon"></lucide-icon>
+        </button>
+      </div>
+
+      <div *ngIf="slots.length === 0" class="no-slots">
+        Définissez au moins une tranche horaire.
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="templateForm.invalid">
+    {{ data.template ? 'Enregistrer' : 'Créer le modèle' }}
+  </button>
+</mat-dialog-actions>

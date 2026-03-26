@@ -1,0 +1,51 @@
+<div class="page-container">
+  <div class="header-section">
+    <div class="title-group">
+      <h1 class="page-title">Modèles d'Horaires</h1>
+      <p class="page-subtitle">Créez des modèles types pour les appliquer rapidement au planning</p>
+    </div>
+    
+    <button class="add-button" (click)="openTemplateDialog()">
+      <lucide-icon [name]="plusIcon"></lucide-icon>
+      Nouveau Modèle
+    </button>
+  </div>
+
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="templates-grid" *ngIf="!loading">
+    <div class="empty-state" *ngIf="templates.length === 0">
+      <lucide-icon [name]="calendarIcon" class="empty-icon"></lucide-icon>
+      <p>Aucun modèle d'horaire trouvé. Créez votre premier modèle !</p>
+    </div>
+
+    <mat-card class="template-card" *ngFor="let template of templates">
+      <mat-card-header>
+        <div mat-card-avatar class="template-avatar">
+          <lucide-icon [name]="clockIcon"></lucide-icon>
+        </div>
+        <mat-card-title>{{ template.name }}</mat-card-title>
+        <mat-card-subtitle>{{ template.description || 'Aucune description' }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="slots-list">
+          <div class="slot-item" *ngFor="let slot of template.slots">
+            <span class="day-name">{{ getDayName(slot.dayOfWeek) }}</span>
+            <span class="time-range">{{ slot.startTime }} - {{ slot.endTime }}</span>
+            <span class="type-badge" [class]="slot.type.toLowerCase()">{{ slot.type }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button color="warn" (click)="deleteTemplate(template)">
+          <lucide-icon [name]="deleteIcon" class="btn-icon"></lucide-icon>
+          Supprimer
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

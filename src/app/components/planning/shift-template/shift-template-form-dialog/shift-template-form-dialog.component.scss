@@ -1,0 +1,72 @@
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem 0.5rem;
+
+  h2 { margin: 0; }
+}
+
+.dialog-content {
+  padding: 1rem 1.5rem;
+}
+
+.full-width { width: 100%; }
+
+.slots-section {
+  margin-top: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  
+  h3 { margin: 0; font-size: 1rem; color: var(--text-secondary); }
+}
+
+.slot-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.day-select { width: 140px; }
+.type-select { width: 120px; }
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  mat-form-field { width: 110px; }
+  .to-separator { color: var(--text-secondary); }
+}
+
+.delete-btn {
+  margin-top: 4px;
+}
+
+.no-slots {
+  padding: 2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+}
+
+.dialog-actions {
+  padding: 1rem 1.5rem;
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.5rem;
+}

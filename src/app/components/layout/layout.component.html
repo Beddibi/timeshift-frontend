@@ -21,6 +21,10 @@
         <lucide-icon [name]="calendarIcon" class="nav-icon"></lucide-icon>
         <span class="nav-text">Planning</span>
       </a>
+      <a class="nav-item sub-item" routerLink="/planning/templates" routerLinkActive="active-link" *ngIf="authService.hasPermission('MANAGE_PLANNING')">
+        <lucide-icon [name]="logoutIcon" class="nav-icon" style="transform: rotate(180deg); margin-left: 1rem; scale: 0.8;"></lucide-icon>
+        <span class="nav-text">Modèles d'horaires</span>
+      </a>
       <a class="nav-item" routerLink="/leaves" routerLinkActive="active-link" *ngIf="authService.hasPermission('VIEW_LEAVES') || authService.hasPermission('MANAGE_LEAVES')">
         <lucide-icon [name]="leaveIcon" class="nav-icon"></lucide-icon>
         <span class="nav-text">Congés</span>

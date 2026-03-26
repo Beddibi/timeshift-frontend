@@ -1,0 +1,133 @@
+.page-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  margin: 0.25rem 0 0;
+}
+
+.add-button {
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(103, 58, 183, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(103, 58, 183, 0.4);
+  }
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.template-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-4px);
+  }
+}
+
+.template-avatar {
+  background: rgba(103, 58, 183, 0.1);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.slots-list {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.slot-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.day-name {
+  font-weight: 600;
+  width: 100px;
+}
+
+.time-range {
+  color: var(--primary-light);
+  font-family: monospace;
+}
+
+.type-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  
+  &.normal { background: rgba(76, 175, 80, 0.1); color: #81c784; }
+  &.overtime { background: rgba(255, 152, 0, 0.1); color: #ffb74d; }
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem;
+  background: var(--bg-card);
+  border: 2px dashed var(--border-color);
+  border-radius: 20px;
+  color: var(--text-secondary);
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1.5rem;
+    opacity: 0.3;
+  }
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.5rem;
+}
